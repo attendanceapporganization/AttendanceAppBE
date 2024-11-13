@@ -16,6 +16,7 @@ import scrum.attendance_app.Service.RegistrationService;
 import scrum.attendance_app.config.SecurityConfig;
 import scrum.attendance_app.data.dto.ProfessorDTO;
 import scrum.attendance_app.data.dto.StudentDTO;
+import scrum.attendance_app.repository.CourseRepository;
 import scrum.attendance_app.repository.ProfessorRepository;
 import scrum.attendance_app.repository.StudentRepository;
 import static org.assertj.core.api.Assertions.*;
@@ -40,6 +41,8 @@ public class AuthenticationControllerTest {
 
     @MockBean
     private ProfessorRepository professorRepository;
+    @MockBean
+    private CourseRepository courseRepository;
 
     @Autowired
     private ObjectMapper mapper;
