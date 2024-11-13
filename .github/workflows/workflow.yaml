@@ -17,17 +17,13 @@ jobs:
           cache: maven
       - name: clear project
         run: |
-          cd attendance_app
           mvn clean
       - name: compile the project
         run: |
-          cd attendance_app
           mvn compile
       - name: run test case
         run: |
-          cd attendance_app
           mvn test
       - name: Build with Maven
         run: |
-          cd attendance_app
           mvn clean install package
