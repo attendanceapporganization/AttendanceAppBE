@@ -9,9 +9,9 @@ import java.util.UUID;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, UUID> {
 
-    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END " +
-            "FROM Attendance a " +
-            "JOIN a.registration r " +
-            "WHERE r.student.id = :studentId AND a.digitCode.id = :codeId")
-    boolean existsByStudentAndLectureCode(@Param("studentId") UUID studentId, @Param("codeId") UUID codeId);
+//    @Query("SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END " +
+//            "FROM Attendance a " +
+//            "JOIN a.registration r " +
+//            "WHERE r.student.id = :studentId AND a.digitCode.numeric_value = :codeId")
+//    boolean existsByStudentAndLectureCode(@Param("studentId") UUID studentId, @Param("codeId") UUID codeId);
 }

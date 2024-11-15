@@ -11,11 +11,11 @@ public class Registration {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    //@GeneratedValue(strategy = GenerationType.UUID)
+    private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id", nullable = false)
+    @JoinColumn(name = "student_id", referencedColumnName = "ID", nullable = false)
     private Student student;
 
 
@@ -23,7 +23,7 @@ public class Registration {
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
-    @Column(name = "registration_date", nullable = false)
+    @Column(name = "registrationdate", nullable = false)
     private LocalDate registrationDate;
 
     public Registration() {}

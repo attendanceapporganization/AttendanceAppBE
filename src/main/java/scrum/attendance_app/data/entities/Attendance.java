@@ -28,15 +28,9 @@ public class Attendance {
     @Column(name = "attendancedate", nullable = false)
     private java.time.LocalDate attendanceDate;
 
-    @Column(name = "ispresent", nullable = false)
-    private Boolean isPresent;
-
-    @Column(name = "hours", length = 20)
-    private String hours;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "digit_code_id", nullable = false)
-    private DigitCode digitCode;
+    @JoinColumn(name = "lesson_id", nullable = false)
+    private Lesson lesson;
 
     @Override
     public String toString() {
@@ -44,8 +38,6 @@ public class Attendance {
                 "id=" + id +
 //                ", registration=" + registration +
                 ", attendanceDate=" + attendanceDate +
-                ", isPresent=" + isPresent +
-                ", hours='" + hours + '\'' +
                 '}';
     }
 }
