@@ -37,7 +37,7 @@ public class UserController {
     private LectureCodeService lectureCodeService;
 
     @PostMapping("/LectureCode")
-    public ResponseEntity<String> generateNewDigitCode(@RequestParam UUID studentId, String code) {
+    public ResponseEntity<String> lectureCode(@RequestParam UUID studentId, @RequestParam String code) {
 
         boolean checkCode = lectureCodeService.registerAttendance(studentId, code);
 
