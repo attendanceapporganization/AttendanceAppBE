@@ -93,7 +93,7 @@ public class UserControllerTest {
                 .andExpect(content().string("you are present at this lesson")); // Verifica che il corpo della risposta contenga il messaggio giusto
     }
     @Test
-    void whenTakeAttendanceWithWrongCode_ThenRaiseWrongAttendanceCodeException() throws Exception {
+    void whenTakeAttendanceWithWrongCode_ThenRaiseWrongAttendanceCodeException() {
         Mockito.when(digitCode.formattedValue()).thenReturn("wrong-code");
         Mockito.when(lessonRepository.findByCourseIdAndEndDateNull(any())).thenReturn(Optional.ofNullable(lessonInstance));
         Mockito.when(studentRepository.findById(any())).thenReturn(Optional.ofNullable(studentInstance));

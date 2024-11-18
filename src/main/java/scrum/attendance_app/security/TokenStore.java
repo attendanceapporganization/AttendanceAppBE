@@ -1,12 +1,13 @@
 package scrum.attendance_app.security;
 
 
-
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 
@@ -15,9 +16,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Map;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 
 public class TokenStore {

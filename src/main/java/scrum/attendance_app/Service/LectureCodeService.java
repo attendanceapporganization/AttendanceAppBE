@@ -51,10 +51,5 @@ public class LectureCodeService {
             }
             else
                 throw new WrongAttendanceCodeException();
-        // Controlla se è già presente un record di attendance per questo studente e codice
-//        boolean alreadyPresent = attendanceRepository.existsByStudentAndLectureCode(studentId, lectureCodeOpt.get().getDigitCodeId());
-//        if (alreadyPresent) {
-//            return false;
-//        }
     }
 }

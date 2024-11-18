@@ -6,17 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import scrum.attendance_app.Service.DigitCodeGenerator;
 import scrum.attendance_app.Service.LectureCodeService;
-import scrum.attendance_app.Service.ProfessorService;
-import scrum.attendance_app.data.entities.Course;
-import scrum.attendance_app.data.entities.DigitCode;
-import scrum.attendance_app.data.entities.Lesson;
 import scrum.attendance_app.error_handling.exceptions.NoOngoingLectureException;
 import scrum.attendance_app.error_handling.exceptions.WrongAttendanceCodeException;
 import scrum.attendance_app.repository.CourseRepository;
 import scrum.attendance_app.repository.DigitCodeRepository;
 import scrum.attendance_app.repository.LessonRepository;
 
-import java.util.Date;
 import java.util.UUID;
 
 @RestController

@@ -7,14 +7,12 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import scrum.attendance_app.data.entities.Professor;
 import scrum.attendance_app.data.entities.Student;
 import scrum.attendance_app.repository.ProfessorRepository;
 import scrum.attendance_app.repository.StudentRepository;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
