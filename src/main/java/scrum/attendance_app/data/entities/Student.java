@@ -4,9 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 
@@ -19,7 +17,7 @@ import java.util.UUID;
 public class Student {
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "student_id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
@@ -33,8 +31,7 @@ public class Student {
     private String password;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @MapsId
-    @JoinColumn(name = "ID")
+    @JoinColumn(name = "registry_id")
     private Registry registry;
 
     @Override

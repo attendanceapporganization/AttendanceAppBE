@@ -15,13 +15,13 @@ public class DigitCode {
     public final static Integer maxValue = 9999;
     final static Random rand = new Random(System.currentTimeMillis());
 
-    @Column(name = "numericValue")
-    final Integer numericValue;
+    @Column(name = "numeric_value")
+    public Integer numericValue;
 
     @Id
-    @Column(name = "digitCodeId")
+    @Column(name = "digit_code_id")
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID digitCodeId;
+    private UUID id;
 
     private DigitCode(Integer actualValue){
         this.numericValue=actualValue;
@@ -38,4 +38,10 @@ public class DigitCode {
     public boolean match(String givenCode){
         return Integer.parseInt(givenCode) == numericValue;
     }
+
+    public UUID getDigitCodeId() {
+        return id;
+    }
+
+    private DigitCode(){}
 }

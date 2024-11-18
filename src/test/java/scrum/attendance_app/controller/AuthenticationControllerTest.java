@@ -16,9 +16,8 @@ import scrum.attendance_app.Service.RegistrationService;
 import scrum.attendance_app.config.SecurityConfig;
 import scrum.attendance_app.data.dto.ProfessorDTO;
 import scrum.attendance_app.data.dto.StudentDTO;
-import scrum.attendance_app.repository.CourseRepository;
-import scrum.attendance_app.repository.ProfessorRepository;
-import scrum.attendance_app.repository.StudentRepository;
+import scrum.attendance_app.repository.*;
+
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,10 +36,17 @@ public class AuthenticationControllerTest {
     private RegistrationService registrationService;
 
     @MockBean
-    private StudentRepository repository;
-
-    @MockBean
     private ProfessorRepository professorRepository;
+    @MockBean
+    private DigitCodeRepository digitCodeRepository;
+    @MockBean
+    private StudentRepository studentRepository;
+    @MockBean
+    private AttendanceRepository attendanceRepository;
+    @MockBean
+    private RegistrationRepository registrationRepository;
+    @MockBean
+    private LessonRepository lessonRepository;
     @MockBean
     private CourseRepository courseRepository;
 

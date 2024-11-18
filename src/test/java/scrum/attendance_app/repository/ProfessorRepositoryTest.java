@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import scrum.attendance_app.data.entities.Professor;
 import scrum.attendance_app.data.entities.Registry;
-import scrum.attendance_app.data.entities.Student;
 
 import java.time.LocalDate;
 import java.util.UUID;

@@ -19,7 +19,7 @@ import java.util.UUID;
 public class Professor {
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "professor_id")
     private UUID id;
 
     @Column(name = "email", length = 100, nullable = false, unique = true)
@@ -30,7 +30,7 @@ public class Professor {
 
     @OneToOne(cascade = CascadeType.MERGE)
     @MapsId
-    @JoinColumn(name = "ID")
+    @JoinColumn(name = "registry_id")
     private Registry registry;
 
     @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -3,10 +3,18 @@ package scrum.attendance_app.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import scrum.attendance_app.Service.ProfessorService;
 import scrum.attendance_app.data.dto.CourseDTO;
+import scrum.attendance_app.data.dto.LessonDTO;
+import scrum.attendance_app.data.entities.DigitCode;
+import scrum.attendance_app.data.entities.Lesson;
+
+import java.time.Instant;
+import java.util.Date;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(path="/api/v1", produces = "application/json")
@@ -47,6 +55,29 @@ public class ProfessorController {
         }
 
         return new ResponseEntity<>("Unable to delete the course", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @GetMapping("startLesson")
+    public String createAndStartLesson(@RequestParam UUID courseId){
+        DigitCode digitCode = DigitCode.createDigitCode();
+        Lesson lesson = Lesson.builder()
+                .startDate(Date.from(Instant.now()))
+                .endDate(null)
+                .digitCode(digitCode)
+                .course(professorService.retrieveCourse(courseId)) // Link to the specified Course
+                .build();
+        Lesson lesson1 = professorService.createLesson(lesson);
+        return "Lesson started: code" + digitCode.formattedValue() + " id: " + professorService.createLesson(lesson);
+        //return new ResponseEntity<>(professorService.createLesson(lesson), HttpStatus.OK);
+    }
+
+    @PutMapping("terminateLesson")
+    @Transactional
+    public String terminateLesson(@RequestParam UUID lessonId){
+        Lesson lesson = professorService.retrieveLesson(lessonId);
+        lesson.setEndDate(Date.from(Instant.now()));
+        professorService.terminateLesson(lesson);
+        return "Lesson terminated.";
     }
 
 }

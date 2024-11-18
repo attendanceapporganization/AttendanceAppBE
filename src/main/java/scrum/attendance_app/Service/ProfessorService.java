@@ -3,18 +3,21 @@ package scrum.attendance_app.Service;
 import jakarta.persistence.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import scrum.attendance_app.data.dto.CourseDTO;
 import scrum.attendance_app.data.entities.Course;
+import scrum.attendance_app.data.entities.Lesson;
 import scrum.attendance_app.data.entities.Professor;
-import scrum.attendance_app.error_handling.exceptions.ExistingCourseNameException;
-import scrum.attendance_app.error_handling.exceptions.ExistingEmailException;
+import scrum.attendance_app.error_handling.exceptions.DataNotFoundException;
 import scrum.attendance_app.repository.CourseRepository;
+import scrum.attendance_app.repository.LessonRepository;
 import scrum.attendance_app.repository.ProfessorRepository;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ProfessorService {
@@ -24,6 +27,9 @@ public class ProfessorService {
 
     @Autowired
     ProfessorRepository professorRepository;
+
+    @Autowired
+    LessonRepository lessonRepository;
 
     // This method find the first course that have as name String name and as professor String professorEmail
     private Course alreadyHasThisCourse(String name, String professorEmail){
@@ -83,5 +89,22 @@ public class ProfessorService {
         catch (PersistenceException e) {
             return "Operation failed due to persistence error: " + e.getMessage();
         }
+    }
+
+    public Course retrieveCourse(UUID courseId) {
+        return courseRepository.findById(courseId).orElseThrow(()->new DataNotFoundException("Course not found"));
+    }
+
+    public Lesson createLesson(Lesson lesson) {
+        return lessonRepository.save(lesson);
+    }
+
+    public Lesson retrieveLesson(UUID lessonId) {
+        return lessonRepository.findById(lessonId).orElseThrow(()->new DataNotFoundException("lesson not found"));
+    }
+
+    public void terminateLesson(Lesson lesson) {
+        lesson.setEndDate(Date.from(Instant.now()));
+        lessonRepository.save(lesson);
     }
 }
