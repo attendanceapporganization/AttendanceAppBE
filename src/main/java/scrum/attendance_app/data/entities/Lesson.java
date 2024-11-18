@@ -18,21 +18,21 @@ import java.util.UUID;
 public class Lesson {
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "lesson_id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "time_interval", length = 100, nullable = false)
-    private String time_interval;
+    @Column(name = "start_date", nullable = false)
+    private Date startDate;
 
-    @Column(name = "date", nullable = false)
-    private Date date;
+    @Column(name = "end_date")
+    private Date endDate;
 
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @OneToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "digit_code_id")
     private DigitCode digitCode;
 

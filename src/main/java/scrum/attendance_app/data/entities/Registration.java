@@ -1,37 +1,35 @@
 package scrum.attendance_app.data.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "registrations_t")
+@Table(name = "registration_t")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Registration {
 
     @Id
-    @Column(name = "id")
-    //@GeneratedValue(strategy = GenerationType.UUID)
-    private int id;
+    @Column(name = "registration_id")
+    @GeneratedValue(strategy = GenerationType.UUID)
+    public UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "student", referencedColumnName = "student_id", nullable = false)
     private Student student;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id", nullable = false)
+    @JoinColumn(name = "course", referencedColumnName = "course_id", nullable = false)
     private Course course;
 
     @Column(name = "registrationdate", nullable = false)
     private LocalDate registrationDate;
-
-    public Registration() {}
-
-    public Registration(Student student, Course course, LocalDate registrationDate) {
-        this.student = student;
-        this.course = course;
-        this.registrationDate = registrationDate;
-    }
 
 }

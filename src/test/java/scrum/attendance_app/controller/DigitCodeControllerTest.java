@@ -26,44 +26,5 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ComponentScan(basePackageClasses = {SecurityConfig.class})
 public class DigitCodeControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
 
-    @MockBean
-    private StudentRepository studentRepository;
-
-    @MockBean
-    private ProfessorRepository professorRepository;
-
-    @MockBean
-    private DigitCodeRepository digitCodeRepository;
-
-    @MockBean
-    private LessonRepository lessonRepository;
-
-    @MockBean
-    private CourseRepository courseRepository;
-
-    @Autowired
-    private DigitCodeGenerator digitCodeGenerator;
-
-
-//    @Test
-//    void generatedCodeIs4ciphersLong() throws Exception {
-//        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/newValue")).andExpect(status().isOk());
-//    }
-    @Test
-    void generatedCodeIs4ciphersLong() throws Exception {
-        UUID testCourseId = UUID.randomUUID();
-
-        // Mock delle risposte del repository
-        Course course = new Course(); // Imposta qui i campi necessari
-        Mockito.when(courseRepository.findById(testCourseId)).thenReturn(Optional.of(course));
-
-        // Esegui la richiesta
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/newValue")
-                        .param("IDCourse", testCourseId.toString()))
-                .andExpect(status().isOk())
-                .andExpect(content().string(Matchers.containsString("New Lesson created with DigitCode: ")));
-    }
 }

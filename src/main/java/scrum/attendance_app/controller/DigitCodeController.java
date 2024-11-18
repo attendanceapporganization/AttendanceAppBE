@@ -22,9 +22,6 @@ public class DigitCodeController {
     private DigitCodeGenerator digitCodeGenerator;
 
     @Autowired
-    private LessonRepository lessonRepository;
-
-    @Autowired
     private CourseRepository courseRepository;
 
     @Autowired
@@ -35,23 +32,6 @@ public class DigitCodeController {
 //        return digitCodeGenerator.generateCode().formattedValue();
 //    }
 
-    @GetMapping("/newValue")
-    public String generateNewDigitCode(@RequestParam UUID IDCourse) {
-        // Generate and save a new DigitCode
-        DigitCode digitCode = DigitCode.createDigitCode();
-        digitCodeRepository.save(digitCode);
 
-        Lesson lesson = Lesson.builder()
-                .time_interval("10:00-12:00")
-                .date(new Date())
-                .digitCode(digitCode)
-                .course(courseRepository.findById(IDCourse).orElse(null)) // Link to the specified Course
-                .build();
-
-
-        lessonRepository.save(lesson);
-
-        return "New Lesson created with DigitCode: " + digitCode.formattedValue();
-    }
 
 }

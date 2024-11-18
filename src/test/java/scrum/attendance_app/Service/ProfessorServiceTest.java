@@ -1,10 +1,7 @@
 package scrum.attendance_app.Service;
 
-import org.hamcrest.MatcherAssert;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
@@ -14,19 +11,17 @@ import scrum.attendance_app.data.entities.Course;
 import scrum.attendance_app.data.entities.Professor;
 import scrum.attendance_app.data.entities.Registry;
 import scrum.attendance_app.repository.CourseRepository;
-import scrum.attendance_app.repository.CourseRepositoryTest;
 import scrum.attendance_app.repository.ProfessorRepository;
 
 import java.time.LocalDate;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
+@TestPropertySource("classpath:application-test.properties")
 public class ProfessorServiceTest {
 
     @Autowired

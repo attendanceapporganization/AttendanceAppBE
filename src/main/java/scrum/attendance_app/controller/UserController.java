@@ -6,14 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import scrum.attendance_app.Service.DigitCodeGenerator;
 import scrum.attendance_app.Service.LectureCodeService;
-import scrum.attendance_app.Service.ProfessorService;
-import scrum.attendance_app.data.entities.DigitCode;
-import scrum.attendance_app.data.entities.Lesson;
+import scrum.attendance_app.error_handling.exceptions.NoOngoingLectureException;
+import scrum.attendance_app.error_handling.exceptions.WrongAttendanceCodeException;
 import scrum.attendance_app.repository.CourseRepository;
 import scrum.attendance_app.repository.DigitCodeRepository;
 import scrum.attendance_app.repository.LessonRepository;
 
-import java.util.Date;
 import java.util.UUID;
 
 @RestController
@@ -36,17 +34,11 @@ public class UserController {
     @Autowired
     private LectureCodeService lectureCodeService;
 
-    @PostMapping("/LectureCode")
-    public ResponseEntity<String> lectureCode(@RequestParam UUID studentId, @RequestParam String code) {
-
-        boolean checkCode = lectureCodeService.registerAttendance(studentId, code);
-
-        if(checkCode){
-            return new ResponseEntity<>("you are present at this lesson", HttpStatus.OK);
-        }
-        else{
-            return new ResponseEntity<>("Code does not exist", HttpStatus.CONFLICT);
-        }
+    @PostMapping("/student/takeAttendance")
+    public ResponseEntity<String> lectureCode(@RequestParam UUID studentId, @RequestParam String code, @RequestParam UUID courseId) throws NoOngoingLectureException, WrongAttendanceCodeException {
+        lectureCodeService.registerAttendance(studentId, code, courseId);
+        return new ResponseEntity<>("you are present at this lesson", HttpStatus.OK);
     }
+
 
 }

@@ -7,10 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 import java.util.UUID;
-
-import static org.thymeleaf.util.Validate.notNull;
 
 @Entity
 @Table(name = "course_t")
@@ -21,7 +18,7 @@ import static org.thymeleaf.util.Validate.notNull;
 public class Course {
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "course_id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 

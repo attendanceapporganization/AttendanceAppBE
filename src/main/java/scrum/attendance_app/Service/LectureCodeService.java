@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import scrum.attendance_app.data.entities.*;
+import scrum.attendance_app.error_handling.exceptions.*;
 import scrum.attendance_app.repository.*;
 
 import java.util.Optional;
@@ -11,9 +12,6 @@ import java.util.UUID;
 
 @Service
 public class LectureCodeService {
-
-    @Autowired
-    private DigitCodeRepository codeRepository;
 
     @Autowired
     private StudentRepository studentRepository;
@@ -28,50 +26,30 @@ public class LectureCodeService {
     private LessonRepository lessonRepository;
 
     @Transactional
-    public boolean registerAttendance(UUID studentId, String code) {
-
-        UUID codeUuid;
-//        try {
-//            codeUuid = UUID.fromString(code);
-//        } catch (IllegalArgumentException e) {
-//            return false;
-//        }
-
-
+    public void registerAttendance(UUID studentId, String code, UUID courseId) throws DataNotFoundException, NoOngoingLectureException, WrongAttendanceCodeException {
+        Optional<Lesson> onGoingLecture = lessonRepository.findByCourseIdAndEndDateNull(courseId);
+        if (onGoingLecture.isEmpty())
+            throw new NoOngoingLectureException();
 
         Optional<Student> studentOpt = studentRepository.findById(studentId);
-        if (studentOpt.isEmpty()) {
-            return false;
-        }
-        Optional<Registration> registrationOpt = registrationRepository.findByStudent_Id(studentId);
-        if (registrationOpt.isEmpty()) {
-            return false;
-        }
-        Optional<DigitCode> lectureCodeOpt = codeRepository.findByNumericValue(Integer.valueOf(code));
-        if (lectureCodeOpt.isEmpty()) {
-            return false;
-        }
+        if (studentOpt.isEmpty())
+            throw new StudentNotFoundException();
 
-        DigitCode lectureCode = lectureCodeOpt.get();
-        Student student = studentOpt.get();
-        // Controlla se è già presente un record di attendance per questo studente e codice
-//        boolean alreadyPresent = attendanceRepository.existsByStudentAndLectureCode(studentId, lectureCodeOpt.get().getDigitCodeId());
-//        if (alreadyPresent) {
-//            return false;
-//        }
+        Optional<Registration> registration = registrationRepository.findByStudentIdAndCourseId(studentId, courseId);
+        if (registration.isEmpty())
+            throw new RegistrationNotFoundException();
 
-        Optional<Lesson> lessonOpt = lessonRepository.findByDigitCode_DigitCodeId(lectureCode.getDigitCodeId());
-        if (registrationOpt.isEmpty()) {
-            return false;
-        }
 
-        Attendance attendance = Attendance.builder()
-                .registration(registrationOpt.get())
-                .attendanceDate(java.time.LocalDate.now())
-                .lesson(lessonOpt.get())
-                .build();
 
-        attendanceRepository.save(attendance);
-        return true;
+        DigitCode lectureCode = onGoingLecture.get().getDigitCode();
+        if (lectureCode != null)
+            if (lectureCode.formattedValue().equalsIgnoreCase(code)){
+                attendanceRepository.save(Attendance.builder()
+                        .registration(registration.get())
+                        .lesson(onGoingLecture.get())
+                        .build());
+            }
+            else
+                throw new WrongAttendanceCodeException();
     }
 }

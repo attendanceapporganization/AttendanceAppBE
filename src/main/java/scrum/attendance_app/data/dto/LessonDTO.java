@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import scrum.attendance_app.data.entities.DigitCode;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -13,13 +15,9 @@ import java.util.Date;
 @NoArgsConstructor
 public class LessonDTO {
 
-    private int id;
+    private UUID id;
 
-    private String timeInterval;
+    private UUID courseId;
 
-    private Date date;
-
-    private int courseId;
-
-    private int digitCodeId;
+    private DigitCode digitCode;
 }

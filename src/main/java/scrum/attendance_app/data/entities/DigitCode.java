@@ -21,10 +21,7 @@ public class DigitCode {
     @Id
     @Column(name = "digit_code_id")
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID digitCodeId;
-
-
-    public DigitCode() {}
+    private UUID id;
 
     private DigitCode(Integer actualValue){
         this.numericValue=actualValue;
@@ -43,13 +40,8 @@ public class DigitCode {
     }
 
     public UUID getDigitCodeId() {
-        return digitCodeId;
-    }
-    public Integer getNumericValue() {
-        return numericValue;
+        return id;
     }
 
-    public void setNumericValue(Integer numericValue) {
-        this.numericValue = numericValue;
-    }
+    private DigitCode(){}
 }

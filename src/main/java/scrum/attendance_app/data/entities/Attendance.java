@@ -17,16 +17,13 @@ import java.util.UUID;
 public class Attendance {
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "attendance_id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "registration_id", nullable = false)
     private Registration registration;
-
-    @Column(name = "attendancedate", nullable = false)
-    private java.time.LocalDate attendanceDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lesson_id", nullable = false)
@@ -37,7 +34,6 @@ public class Attendance {
         return "Attendance{" +
                 "id=" + id +
 //                ", registration=" + registration +
-                ", attendanceDate=" + attendanceDate +
                 '}';
     }
 }

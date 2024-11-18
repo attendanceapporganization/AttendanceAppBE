@@ -17,7 +17,7 @@ import java.util.UUID;
 public class Registry {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "registry_id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
