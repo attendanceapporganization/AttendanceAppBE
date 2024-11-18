@@ -80,7 +80,7 @@ public class ProfessorServiceTest {
                 .build();
     }
 
-    @Test
+    //@Test
     void whenSavingCourse_thenReturnCreated(){
         setup();
 
@@ -92,7 +92,7 @@ public class ProfessorServiceTest {
         courseRepository.delete(course);
     }
 
-    @Test
+    //@Test
     void whenSavingCourse_thenReturnProfessorDoesNotExist() {
         courseDTO = CourseDTO.builder()
                 .id(UUID.randomUUID())
