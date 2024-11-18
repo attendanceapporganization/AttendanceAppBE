@@ -9,6 +9,8 @@ import scrum.attendance_app.Service.ProfessorService;
 import scrum.attendance_app.data.dto.CourseDTO;
 import scrum.attendance_app.security.TokenStore;
 
+import java.awt.*;
+
 @RestController
 @RequestMapping(path="/api/v1", produces = "application/json")
 @CrossOrigin(origins = "http://localhost:8080")
@@ -57,4 +59,17 @@ public class ProfessorController {
         return new ResponseEntity<>("Unable to delete the course", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+
+    @GetMapping(path = "/ListCourse")
+    public ResponseEntity<java.util.List> createCourse(
+            @RequestHeader("Authorization") String authorizationHeader) throws Exception {
+
+        String token = authorizationHeader.replace("Bearer ", "");
+        TokenStore.getInstance().verifyToken(token);
+        String user = TokenStore.getInstance().getUser(token);
+        java.util.List corsi = professorService.getListCourse(user);
+
+
+        return new ResponseEntity<java.util.List>(corsi, HttpStatus.OK);
+    }
 }

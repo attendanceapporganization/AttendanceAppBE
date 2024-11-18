@@ -88,4 +88,16 @@ public class ProfessorService {
             return "Operation failed due to persistence error: " + e.getMessage();
         }
     }
+
+
+    public List getListCourse(String user) {
+
+        Professor professor = professorRepository.findByEmail(user).get();
+
+
+        var corsi = courseRepository.findByProfessorId(professor);
+
+        return corsi;
+
+    }
 }
