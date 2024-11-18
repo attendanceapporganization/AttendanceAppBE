@@ -50,7 +50,11 @@ public class ProfessorService {
     }
 
     // Create the course with given courseDTO
-    public String createCourse(CourseDTO courseDTO) {
+    public String createCourse(CourseDTO courseDTO, String user) {
+
+        Professor professor = professorRepository.findByEmail(user).get();
+        courseDTO.setProfessorOwner(professor.getEmail());
+        courseDTO.setIdProfessor(professor.getId());
         if (alreadyHasThisCourse(courseDTO.getName(), courseDTO.getProfessorOwner()) != null) {
             return "Course already exists";
         }

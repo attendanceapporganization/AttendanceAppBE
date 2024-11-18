@@ -90,7 +90,7 @@ public class ProfessorServiceTest {
         setup();
 
         given(courseRepository.save(course)).willReturn(course);
-        String returnMessage = professorService.createCourse(courseDTO);
+        String returnMessage = professorService.createCourse(courseDTO, "email");
         assertThat(returnMessage).isEqualTo("Created");
 
         professorRepository.delete(professor);
@@ -114,7 +114,7 @@ public class ProfessorServiceTest {
                 .build();
 
         given(courseRepository.save(course)).willReturn(course);
-        String returnMessage = professorService.createCourse(courseDTO);
+        String returnMessage = professorService.createCourse(courseDTO, "email");
         assertThat(returnMessage).isEqualTo("Professor does not exist");
     }
 

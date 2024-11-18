@@ -28,7 +28,7 @@ public class Course {
     @Column(name = "name", length = 100, nullable = false)
     private String name;
 
-    @Column(name = "description", length = 250, nullable = false)
+    @Column(name = "description", length = 250, nullable = true)
     private String description;
 
     @ManyToOne(cascade = CascadeType.MERGE)

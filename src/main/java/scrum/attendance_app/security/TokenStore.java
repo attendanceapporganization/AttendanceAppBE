@@ -59,18 +59,28 @@ public class TokenStore {
         }
     }
 
+//    public String getUser(String token) throws JOSEException, ParseException {
+//        SignedJWT signedJWT = SignedJWT.parse(token);
+//        JWSVerifier jwsVerifier = new MACVerifier(secretKey.getBytes());
+//        if (signedJWT.verify(jwsVerifier)) {
+//            if (new Date().before(signedJWT.getJWTClaimsSet().getExpirationTime()) && new Date().after(signedJWT.getJWTClaimsSet().getNotBeforeTime()))
+//                return (String) signedJWT.getPayload().toJSONObject().get("email");
+//        }
+//
+//
+//        throw new RuntimeException("Invalid token");
+//    }
+
     public String getUser(String token) throws JOSEException, ParseException {
         SignedJWT signedJWT = SignedJWT.parse(token);
         JWSVerifier jwsVerifier = new MACVerifier(secretKey.getBytes());
-        if(signedJWT.verify(jwsVerifier)) {
-            if(new Date().before(signedJWT.getJWTClaimsSet().getExpirationTime()) && new Date().after(signedJWT.getJWTClaimsSet().getNotBeforeTime()))
-                return (String) signedJWT.getPayload().toJSONObject().get("email");
+        if (signedJWT.verify(jwsVerifier)) {
+            return (String) signedJWT.getPayload().toJSONObject().get("email");
         }
-
-
-
         throw new RuntimeException("Invalid token");
     }
+
+
 
 
     public String getUserRole(String token) throws JOSEException, ParseException {
@@ -97,4 +107,5 @@ public class TokenStore {
             return header.replace("Bearer ", "");
         return "invalid";
     }
+
 }

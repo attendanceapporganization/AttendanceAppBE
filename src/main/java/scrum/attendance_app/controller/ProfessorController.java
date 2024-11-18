@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import scrum.attendance_app.Service.ProfessorService;
 import scrum.attendance_app.data.dto.CourseDTO;
+import scrum.attendance_app.security.TokenStore;
 
 @RestController
 @RequestMapping(path="/api/v1", produces = "application/json")
@@ -16,16 +17,23 @@ public class ProfessorController {
     @Autowired
     private ProfessorService professorService;
 
-    // Method to create course with give courseDTO
+    // Method to create course with give courseDTOs
     // Possible httpStatus OK,CONFLICT and INTERNAL_SERVER_ERROR
     @PostMapping(path = "/createCourse")
-    public ResponseEntity<String> createCourse(@RequestBody CourseDTO courseDTO) throws Exception {
-        String createCourseStatus = professorService.createCourse(courseDTO);
+    public ResponseEntity<String> createCourse(
+            @RequestBody CourseDTO courseDTO,
+            @RequestHeader("Authorization") String authorizationHeader) throws Exception {
 
-        if(createCourseStatus.equals("Created")) {
+
+        String token = authorizationHeader.replace("Bearer ", "");
+        TokenStore.getInstance().verifyToken(token);
+        String user = TokenStore.getInstance().getUser(token);
+
+        String createCourseStatus = professorService.createCourse(courseDTO, user);
+
+        if (createCourseStatus.equals("Created")) {
             return new ResponseEntity<>("Course created successfully", HttpStatus.OK);
-        }
-        else if(createCourseStatus.equals("Course already exists")) {
+        } else if (createCourseStatus.equals("Course already exists")) {
             return new ResponseEntity<>("Existing course", HttpStatus.CONFLICT);
         }
 
