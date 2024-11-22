@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      SCRUMXX/lectures
+      master
 
 jobs:
   build:
