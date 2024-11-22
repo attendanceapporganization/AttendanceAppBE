@@ -7,23 +7,23 @@ import org.springframework.stereotype.Service;
 import scrum.attendance_app.data.dto.CourseDTO;
 import scrum.attendance_app.data.entities.Course;
 import scrum.attendance_app.data.entities.Professor;
-import scrum.attendance_app.error_handling.exceptions.ExistingCourseNameException;
-import scrum.attendance_app.error_handling.exceptions.ExistingEmailException;
 import scrum.attendance_app.repository.CourseRepository;
 import scrum.attendance_app.repository.ProfessorRepository;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class ProfessorService {
 
-    @Autowired
-    CourseRepository courseRepository;
+    private final CourseRepository courseRepository;
+    private final ProfessorRepository professorRepository;
 
     @Autowired
-    ProfessorRepository professorRepository;
+    public ProfessorService(CourseRepository courseRepository, ProfessorRepository professorRepository) {
+        this.courseRepository = courseRepository;
+        this.professorRepository = professorRepository;
+    }
 
     // This method find the first course that have as name String name and as professor String professorEmail
     private Course alreadyHasThisCourse(String name, String professorEmail){
@@ -51,11 +51,11 @@ public class ProfessorService {
 
     // Create the course with given courseDTO
     public String createCourse(CourseDTO courseDTO) {
-        if (alreadyHasThisCourse(courseDTO.getName(), courseDTO.getProfessorOwner()) != null) {
-            return "Course already exists";
-        }
         if (professorRepository.findByEmail(courseDTO.getProfessorOwner()).isEmpty()) {
             return "Professor does not exist";
+        }
+        if (alreadyHasThisCourse(courseDTO.getName(), courseDTO.getProfessorOwner()) != null) {
+            return "Course already exists";
         }
         try {
             courseRepository.save(converteToCourse(courseDTO));
@@ -70,18 +70,47 @@ public class ProfessorService {
 
     // Delete the course with given course name and professor email
     public String deleteCourse(String name, String professorEmail) {
-        if(alreadyHasThisCourse(name, professorEmail) == null){
-            return "Course not found";
-        }
         if (professorRepository.findByEmail(professorEmail).isEmpty()) {
             return "Professor does not exist";
+        }
+        if(alreadyHasThisCourse(name, professorEmail) == null){
+            return "Course not found";
         }
         try {
             courseRepository.delete(Objects.requireNonNull(alreadyHasThisCourse(name, professorEmail)));
             return "Deleted";
         }
         catch (PersistenceException e) {
-            return "Operation failed due to persistence error: " + e.getMessage();
+            return "Course deletion failed due to persistence error: " + e.getMessage();
+        }
+    }
+
+    public String editCourse(String name, String professorEmail, String newName, String newDescription) {
+        Course course = alreadyHasThisCourse(name, professorEmail);
+
+        if(course == null){
+            return "Course not found";
+        }
+
+        try {
+            if (!newName.equals(course.getName())) {
+                if(alreadyHasThisCourse(newName, professorEmail) == null){
+                    course.setName(newName);
+                }
+                else{
+                    return "Course already exists";
+                }
+            }
+            if (!newDescription.equals(course.getDescription())) {
+                course.setDescription(newDescription);
+            }
+
+            courseRepository.save(course);
+
+            return "Edited";
+        }
+        catch (PersistenceException e) {
+            return "Course edit failed due to persistence error: " + e.getMessage();
         }
     }
 }

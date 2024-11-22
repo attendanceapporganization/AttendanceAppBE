@@ -7,10 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 import java.util.UUID;
-
-import static org.thymeleaf.util.Validate.notNull;
 
 @Entity
 @Table(name = "course_t")
@@ -61,4 +58,5 @@ public class Course {
                 ", professorOwner=" + /*professorOwner*/ +
                 '}';
     }
+
 }

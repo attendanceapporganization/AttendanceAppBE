@@ -18,7 +18,6 @@ import java.util.Optional;
 @Service
 public class RegistrationService {
 
-
     @Autowired
     StudentRepository studentRepository;
     @Autowired
