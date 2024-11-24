@@ -104,8 +104,8 @@ public class ProfessorController {
     }
 
 
-    @GetMapping(path = "/ListCourse")
-    public ResponseEntity<java.util.List> createCourse(
+    @GetMapping(path = "/ListCourses")
+    public ResponseEntity<java.util.List> getListCourses(
             @RequestHeader("Authorization") String authorizationHeader) throws Exception {
 
         String token = authorizationHeader.replace("Bearer ", "");

@@ -21,7 +21,7 @@ public class Registration {
     public UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student", referencedColumnName = "student_id", nullable = false)
+    @JoinColumn(name = "student", referencedColumnName = "id", nullable = false)
     private Student student;
 
 

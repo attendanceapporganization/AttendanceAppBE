@@ -17,7 +17,7 @@ import java.util.UUID;
 public class Student {
 
     @Id
-    @Column(name = "student_id")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
@@ -31,7 +31,8 @@ public class Student {
     private String password;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "registry_id")
+    @MapsId
+    @JoinColumn(name = "ID")
     private Registry registry;
 
     @Override

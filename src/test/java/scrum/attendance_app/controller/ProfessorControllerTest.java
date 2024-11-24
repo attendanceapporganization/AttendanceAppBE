@@ -4,12 +4,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import scrum.attendance_app.Service.ProfessorService;
 import scrum.attendance_app.data.dto.CourseDTO;
+import scrum.attendance_app.security.TokenStore;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -218,5 +222,38 @@ class ProfessorControllerTest {
 
         verify(professorService, times(1)).editCourse(name, professorEmail, newName, newDescription);
     }
+
+
+    @Test
+    void testGetList() throws Exception {
+        // Dati di test
+        String token = "Bearer someValidToken";
+        String userEmail = "professor@email.com";
+        List<String> mockCourses = Arrays.asList("Course 1", "Course 2", "Course 3");
+
+
+        try (MockedStatic<TokenStore> mockedTokenStore = mockStatic(TokenStore.class)) {
+            TokenStore tokenStoreMock = mock(TokenStore.class);
+
+
+            mockedTokenStore.when(TokenStore::getInstance).thenReturn(tokenStoreMock);
+            when(tokenStoreMock.verifyToken(token.replace("Bearer ", ""))).thenReturn(true);
+            when(tokenStoreMock.getUser(token.replace("Bearer ", ""))).thenReturn(userEmail);
+            when(professorService.getListCourse(userEmail)).thenReturn(mockCourses);
+
+
+            ResponseEntity<List> result = controller.getListCourses(token);
+
+
+            assertEquals(HttpStatus.OK, result.getStatusCode());
+            assertEquals(mockCourses, result.getBody());
+
+
+            verify(tokenStoreMock, times(1)).verifyToken(token.replace("Bearer ", ""));
+            verify(tokenStoreMock, times(1)).getUser(token.replace("Bearer ", ""));
+            verify(professorService, times(1)).getListCourse(userEmail);
+        }
+    }
+
 
 }
