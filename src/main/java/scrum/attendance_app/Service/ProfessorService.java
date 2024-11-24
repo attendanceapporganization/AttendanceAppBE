@@ -49,6 +49,15 @@ public class ProfessorService {
                 .build();
     }
 
+    private void assignCourseCode(Course course){
+        course.generateCourseCode();
+        while (course.isDefinitiveCode()){
+            if(!courseRepository.existsByCourseCode(course.showCourseCode())){
+                course.lockCourseCode();
+            }
+        }
+    }
+
     // Create the course with given courseDTO
     public String createCourse(CourseDTO courseDTO) {
         if (professorRepository.findByEmail(courseDTO.getProfessorOwner()).isEmpty()) {
@@ -58,13 +67,13 @@ public class ProfessorService {
             return "Course already exists";
         }
         try {
-            courseRepository.save(converteToCourse(courseDTO));
+            Course course = converteToCourse(courseDTO);
+            assignCourseCode(course);
+            courseRepository.save(course);
             return "Created";
         }
         catch (PersistenceException e) {
             return "Course creation failed due to persistence error: " + e.getMessage();
-        } catch (Exception e) {
-            return "Course creation failed due to unexpected error: " + e.getMessage();
         }
     }
 

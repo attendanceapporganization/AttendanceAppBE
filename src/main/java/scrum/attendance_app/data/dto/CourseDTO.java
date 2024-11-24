@@ -22,4 +22,7 @@ public class CourseDTO {
 
     @JsonProperty("professorOwner")
     private String professorOwner;
+
+    @JsonProperty("code")
+    private String code;
 }

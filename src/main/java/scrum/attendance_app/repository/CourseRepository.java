@@ -18,4 +18,7 @@ public interface CourseRepository extends JpaRepository<Course, UUID> {
     // To retrieve a list of all course that have the same name
     @Query("SELECT c FROM Course c WHERE LOWER(c.name) = LOWER(:name)")
     List<Course> findByCourseNameLowercase(@Param("name") String name);
+
+    @Query("SELECT c FROM Course c WHERE c.code = :courseCode")
+    boolean existsByCourseCode(@Param("courseCode") String courseCode);
 }
