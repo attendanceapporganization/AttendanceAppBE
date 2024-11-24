@@ -1,86 +1,222 @@
 package scrum.attendance_app.controller;
 
-import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
-import org.mockito.internal.matchers.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import scrum.attendance_app.Service.DigitCodeGenerator;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import scrum.attendance_app.Service.ProfessorService;
-import scrum.attendance_app.config.SecurityConfig;
-import scrum.attendance_app.data.entities.Course;
-import scrum.attendance_app.data.entities.Lesson;
-import scrum.attendance_app.repository.*;
+import scrum.attendance_app.data.dto.CourseDTO;
 
-import java.time.LocalDate;
-import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
-@WebMvcTest(ProfessorController.class)
-@Import({DigitCodeGenerator.class, ProfessorService.class})
-@ComponentScan(basePackageClasses = {SecurityConfig.class})
-public class ProfessorControllerTest {
+class ProfessorControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Mock
+    private ProfessorService professorService;
 
-    @MockBean
-    private StudentRepository studentRepository;
+    @InjectMocks
+    private ProfessorController controller;
 
-    @MockBean
-    private ProfessorRepository professorRepository;
-
-    @MockBean
-    private DigitCodeRepository digitCodeRepository;
-
-    @MockBean
-    private LessonRepository lessonRepository;
-
-    @MockBean
-    private CourseRepository courseRepository;
-
-    @Autowired
-    private DigitCodeGenerator digitCodeGenerator;
-
-
-    @Test
-    void whenStartLesson_thenOk() throws Exception {
-        UUID testCourseId = UUID.randomUUID();
-        Course course = Course.builder()
-                .id(UUID.randomUUID())
-                .build();
-        Lesson lesson = Lesson.builder()
-                .id(UUID.randomUUID())
-                .build();
-        Mockito.when(courseRepository.findById(ArgumentMatchers.any())).thenReturn(Optional.of(course));
-        Mockito.when(lessonRepository.save(ArgumentMatchers.any())).thenReturn(lesson);
-        // Esegui la richiesta
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/startLesson")
-                        .param("courseId", testCourseId.toString()))
-                .andExpect(status().isOk())
-                .andExpect(content().string(Matchers.containsString("Lesson started")));
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void whenTerminateLesson_thenOk() throws Exception {
-        Lesson lesson = Lesson.builder()
+    void testCreateCourse() {
+        CourseDTO courseDTO = CourseDTO.builder()
                 .id(UUID.randomUUID())
+                .name("Course1")
+                .description("Description1")
+                .professorOwner("email@email.it")
                 .build();
-        Mockito.when(lessonRepository.findById(ArgumentMatchers.any())).thenReturn(Optional.ofNullable(lesson));
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/terminateLesson")
-                        .param("lessonId", UUID.randomUUID().toString()))
-                .andExpect(status().isOk())
-                .andExpect(content().string(Matchers.containsString("Lesson terminated.")));
+
+        String expectedMessage = "Created";
+
+        when(professorService.createCourse(courseDTO)).thenReturn(expectedMessage);
+
+        ResponseEntity<String> result = controller.createCourse(courseDTO);
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals("Course created successfully", result.getBody());
+        verify(professorService, times(1)).createCourse(courseDTO);
     }
+
+    @Test
+    void testCreateCourseConflict() {
+        CourseDTO courseDTO = CourseDTO.builder()
+                .id(UUID.randomUUID())
+                .name("Course1")
+                .description("Description1")
+                .professorOwner("email@email.it")
+                .build();
+
+        String expectedMessage = "Course already exists";
+
+        when(professorService.createCourse(courseDTO)).thenReturn(expectedMessage);
+
+        ResponseEntity<String> result = controller.createCourse(courseDTO);
+
+        assertEquals(HttpStatus.CONFLICT, result.getStatusCode());
+        assertEquals("Existing course", result.getBody());
+        verify(professorService, times(1)).createCourse(courseDTO);
+    }
+
+    @Test
+    void testCreateCourseError() {
+        CourseDTO courseDTO = CourseDTO.builder()
+                .id(UUID.randomUUID())
+                .name("Course1")
+                .description("Description1")
+                .professorOwner("email@email.it")
+                .build();
+
+        String expectedMessage = "Unable to create course";
+
+        when(professorService.createCourse(courseDTO)).thenReturn(expectedMessage);
+
+        ResponseEntity<String> result = controller.createCourse(courseDTO);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertEquals("Unable to create the course", result.getBody());
+        verify(professorService, times(1)).createCourse(courseDTO);
+    }
+
+    @Test
+    void testDeleteCourse() {
+        String name = "Course1";
+        String professorEmail = "email@email.it";
+
+        String expectedMessage = "Deleted";
+
+        when(professorService.deleteCourse(name, professorEmail)).thenReturn(expectedMessage);
+
+        ResponseEntity<String> result = controller.deleteCourse(name, professorEmail);
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals("Course deleted successfully", result.getBody());
+
+        verify(professorService, times(1)).deleteCourse(name, professorEmail);
+    }
+
+    @Test
+    void testDeleteCourseNotFound() {
+        String name = "Course1";
+        String professorEmail = "email@email.it";
+
+        String expectedMessage = "Course not found";
+
+        when(professorService.deleteCourse(name, professorEmail)).thenReturn(expectedMessage);
+
+        ResponseEntity<String> result = controller.deleteCourse(name, professorEmail);
+
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertEquals("Non-existing course", result.getBody());
+
+        verify(professorService, times(1)).deleteCourse(name, professorEmail);
+    }
+
+    @Test
+    void testDeleteCourseError() {
+        String name = "Course1";
+        String professorEmail = "email@email.it";
+
+        String expectedMessage = "Unable to delete the course";
+
+        when(professorService.deleteCourse(name, professorEmail)).thenReturn(expectedMessage);
+
+        ResponseEntity<String> result = controller.deleteCourse(name, professorEmail);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertEquals("Unable to delete the course", result.getBody());
+
+        verify(professorService, times(1)).deleteCourse(name, professorEmail);
+    }
+
+    @Test
+    void testEditCourse() {
+        String expectedMessage = "Edited";
+
+        String name = "Original Course";
+        String professorEmail = "original@email.com";
+        String newName = "Updated Name";
+        String newDescription = "New Description";
+
+        when(professorService.editCourse(name, professorEmail, newName, newDescription))
+                .thenReturn(expectedMessage);
+
+        ResponseEntity<String> result = controller.editCourse(name, professorEmail, newName, newDescription);
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals("Course updated successfully", result.getBody());
+
+        verify(professorService, times(1)).editCourse(name, professorEmail, newName, newDescription);
+    }
+
+    @Test
+    void testEditCourseNotFound() {
+        String expectedMessage = "Course not found";
+
+        String name = "Original Course";
+        String professorEmail = "original@email.com";
+        String newName = "Updated Name";
+        String newDescription = "New Description";
+
+        when(professorService.editCourse(name, professorEmail, newName, newDescription))
+                .thenReturn(expectedMessage);
+
+        ResponseEntity<String> result = controller.editCourse(name, professorEmail, newName, newDescription);
+
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertEquals("Non-existing course", result.getBody());
+
+        verify(professorService, times(1)).editCourse(name, professorEmail, newName, newDescription);
+    }
+
+    @Test
+    void testEditCourseAlreadyE() {
+        String expectedMessage = "Course already exists";
+
+        String name = "Original Course";
+        String professorEmail = "original@email.com";
+        String newName = "Updated Name";
+        String newDescription = "New Description";
+
+        when(professorService.editCourse(name, professorEmail, newName, newDescription))
+                .thenReturn(expectedMessage);
+
+        ResponseEntity<String> result = controller.editCourse(name, professorEmail, newName, newDescription);
+
+        assertEquals(HttpStatus.CONFLICT, result.getStatusCode());
+        assertEquals("Existing course", result.getBody());
+
+        verify(professorService, times(1)).editCourse(name, professorEmail, newName, newDescription);
+    }
+
+    @Test
+    void testEditCourseError() {
+        String expectedMessage = "Unable to edit the course";
+
+        String name = "Original Course";
+        String professorEmail = "original@email.com";
+        String newName = "Updated Name";
+        String newDescription = "New Description";
+
+        when(professorService.editCourse(name, professorEmail, newName, newDescription))
+                .thenReturn(expectedMessage);
+
+        ResponseEntity<String> result = controller.editCourse(name, professorEmail, newName, newDescription);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertEquals("Unable to edit the course", result.getBody());
+
+        verify(professorService, times(1)).editCourse(name, professorEmail, newName, newDescription);
+    }
+
 }
