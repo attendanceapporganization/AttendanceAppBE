@@ -28,6 +28,12 @@ public class Course {
     @Column(name = "description", length = 250, nullable = true)
     private String description;
 
+    @Column(name = "code", length = 8, nullable = false, unique = true)
+    private String code;
+
+    @Transient
+    private boolean isDefinitiveCode = false;
+
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "professor_ID")
     private Professor professor;
@@ -47,6 +53,7 @@ public class Course {
         this.name = builder.name;
         this.description = builder.description;
         this.professor = builder.professor;
+        this.code = builder.code;
     }
 
     @Override
@@ -58,4 +65,29 @@ public class Course {
                 ", professorOwner=" + /*professorOwner*/ +
                 '}';
     }
+
+    public void lockCourseCode(){
+        if(!this.isDefinitiveCode){
+            this.isDefinitiveCode = true;
+        }
+    }
+
+    public void generateCourseCode(){
+        if (!this.isDefinitiveCode){
+            StringBuilder sb = new StringBuilder();
+            String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#@+*^?!_-";
+
+            for (int i = 0; i < 8; i++) {
+                int index = (int) (Math.random() * characters.length());
+                sb.append(characters.charAt(index));
+            }
+
+            this.code = sb.toString();
+        }
+    }
+
+    public String showCourseCode(){
+        return new String(this.code);
+    }
+
 }
