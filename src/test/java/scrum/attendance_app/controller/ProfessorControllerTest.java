@@ -184,7 +184,7 @@ class ProfessorControllerTest {
     }
 
     @Test
-    void testEditCourseAlreadyE() {
+    void testEditCourseAlreadyExists() {
         String expectedMessage = "Course already exists";
 
         String name = "Original Course";

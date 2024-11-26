@@ -1,108 +1,68 @@
 package scrum.attendance_app.controller;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import scrum.attendance_app.Service.DigitCodeGenerator;
-import scrum.attendance_app.Service.LectureCodeService;
-import scrum.attendance_app.config.SecurityConfig;
-import scrum.attendance_app.data.entities.DigitCode;
-import scrum.attendance_app.data.entities.Lesson;
-import scrum.attendance_app.data.entities.Registration;
-import scrum.attendance_app.data.entities.Student;
-import scrum.attendance_app.error_handling.exceptions.WrongAttendanceCodeException;
-import scrum.attendance_app.repository.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import scrum.attendance_app.Service.UserService;
 
-import java.util.Optional;
-import java.util.UUID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@WebMvcTest(UserController.class)
-@Import({LectureCodeService.class, DigitCodeGenerator.class})
-@ComponentScan(basePackageClasses = {SecurityConfig.class})
 public class UserControllerTest {
+    @Mock
+    private UserService userService;
 
-    @Autowired
-    private MockMvc mockMvc;
-    @MockBean
-    private ProfessorRepository professorRepository;
-    @MockBean
-    private DigitCodeRepository digitCodeRepository;
-    @MockBean
-    private StudentRepository studentRepository;
-    @MockBean
-    private AttendanceRepository attendanceRepository;
-    @MockBean
-    private RegistrationRepository registrationRepository;
-    @MockBean
-    private LessonRepository lessonRepository;
-    @MockBean
-    private CourseRepository courseRepository;
-    @Autowired
-    private LectureCodeService lectureCodeService;
+    @InjectMocks
+    private UserController userController;
 
-    private static String code;
-    private static DigitCode digitCode;
-    private static Lesson lessonInstance;
-    private static Student studentInstance;
-    private static Registration registrationInstance;
-
-    @BeforeAll
-    public static void setup(){
-        code = "1234";
-        digitCode=mock(DigitCode.class);
-        lessonInstance = Lesson.builder()
-            .id(UUID.randomUUID())
-            .digitCode(digitCode)
-            .build();
-        studentInstance = Student.builder()
-            .id(UUID.randomUUID())
-            .email("email@address.com")
-            .build();
-        registrationInstance = Registration.builder()
-            .id(UUID.randomUUID())
-            .build();
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void whenTakeAttendanceWithRightCode_ThenOk() throws Exception {
-        Mockito.when(digitCode.formattedValue()).thenReturn(code);
-        Mockito.when(lessonRepository.findByCourseIdAndEndDateNull(any())).thenReturn(Optional.ofNullable(lessonInstance));
-        Mockito.when(studentRepository.findById(any())).thenReturn(Optional.ofNullable(studentInstance));
-        Mockito.when(registrationRepository.findByStudentIdAndCourseId(any(), any())).thenReturn(Optional.ofNullable(registrationInstance));
+    void signUpCourse_SuccessfulRegistration() {
+        String registrationNumber = "12345";
+        String courseCode = "C001";
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/student/takeAttendance")
-                        .param("studentId", UUID.randomUUID().toString())
-                        .param("code", code)
-                        .param("courseId", UUID.randomUUID().toString())
-                        )
-                .andExpect(status().isOk())
-                .andExpect(content().string("you are present at this lesson")); // Verifica che il corpo della risposta contenga il messaggio giusto
+        when(userService.signUpCourse(registrationNumber, courseCode)).thenReturn("Registered");
+
+        ResponseEntity<String> response = userController.signUpCourse(registrationNumber, courseCode);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Sign up to course successfully", response.getBody());
     }
+
     @Test
-    void whenTakeAttendanceWithWrongCode_ThenRaiseWrongAttendanceCodeException() {
-        Mockito.when(digitCode.formattedValue()).thenReturn("wrong-code");
-        Mockito.when(lessonRepository.findByCourseIdAndEndDateNull(any())).thenReturn(Optional.ofNullable(lessonInstance));
-        Mockito.when(studentRepository.findById(any())).thenReturn(Optional.ofNullable(studentInstance));
-        Mockito.when(registrationRepository.findByStudentIdAndCourseId(any(), any())).thenReturn(Optional.ofNullable(registrationInstance));
+    void signUpCourse_AlreadyRegistered() {
+        String registrationNumber = "12345";
+        String courseCode = "C001";
 
-        Throwable thrown = catchThrowable(() -> {
-            lectureCodeService.registerAttendance(UUID.randomUUID(),code,UUID.randomUUID());
-        });
-        assertThat(thrown).isInstanceOf(WrongAttendanceCodeException.class);
+        when(userService.signUpCourse(registrationNumber, courseCode)).thenReturn("Already registered");
+
+        ResponseEntity<String> response = userController.signUpCourse(registrationNumber, courseCode);
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertEquals("Already registered to course", response.getBody());
     }
+
+    @Test
+    void signUpCourse_CourseNotFound() {
+        // Arrange
+        String registrationNumber = "12345";
+        String courseCode = "C001";
+
+        when(userService.signUpCourse(registrationNumber, courseCode)).thenReturn("Course not found");
+
+
+        ResponseEntity<String> response = userController.signUpCourse(registrationNumber, courseCode);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals("Non-existing course", response.getBody());
+    }
+
 
 }

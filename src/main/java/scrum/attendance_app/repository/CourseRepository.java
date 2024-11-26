@@ -23,6 +23,8 @@ public interface CourseRepository extends JpaRepository<Course, UUID> {
     @Query("SELECT c FROM Course c WHERE c.code = :courseCode")
     boolean existsByCourseCode(@Param("courseCode") String courseCode);
 
+    @Query("SELECT c FROM Course c WHERE c.code = :courseCode")
+    Course findCourseByCode(@Param("courseCode") String courseCode);
 
     @Query("SELECT c FROM Course c WHERE c.professor = :professorId")
     List<Course> findByProfessorId(@Param("professorId") Professor professorId);
