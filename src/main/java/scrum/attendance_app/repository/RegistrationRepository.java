@@ -1,6 +1,7 @@
 package scrum.attendance_app.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import scrum.attendance_app.data.entities.Registration;
 
 import java.util.List;
@@ -13,5 +14,4 @@ public interface RegistrationRepository extends JpaRepository<Registration, UUID
     List<Registration> findAll();
 
     Optional<Registration> findByStudentIdAndCourseId(UUID studentId, UUID courseId);
-
 }

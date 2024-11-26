@@ -24,7 +24,6 @@ public class Registration {
     @JoinColumn(name = "student", referencedColumnName = "student_id", nullable = false)
     private Student student;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course", referencedColumnName = "course_id", nullable = false)
     private Course course;

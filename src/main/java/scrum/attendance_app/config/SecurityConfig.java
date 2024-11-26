@@ -47,7 +47,7 @@ public class SecurityConfig{
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         return http.
-                authorizeHttpRequests().requestMatchers("/api/v1/register", "/api/v1/authenticate", "/api/v1/newPassword", "/api/v1/createCourse", "/api/v1/deleteCourse", "/api/v1/editCourse", "/api/v1/newValue").permitAll().and().
+                authorizeHttpRequests().requestMatchers("/api/v1/register", "/api/v1/authenticate", "/api/v1/newPassword", "/api/v1/createCourse", "/api/v1/deleteCourse", "/api/v1/editCourse", "/api/v1/newValue", "/student/signUpCourse").permitAll().and().
                 authorizeHttpRequests().anyRequest().authenticated().and().csrf().disable().
                 sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().
                 addFilterBefore(requestFilter, UsernamePasswordAuthenticationFilter.class).build();
