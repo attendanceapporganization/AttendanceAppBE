@@ -16,6 +16,7 @@ import scrum.attendance_app.repository.RegistrationRepository;
 import scrum.attendance_app.repository.StudentRepository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -60,6 +61,10 @@ public class UserService {
         catch (PersistenceException e) {
             return "Unable to sign up the course: " + e.getMessage();
         }
+
+    }
+
+    public List<Course> retrieveCourses(String user) {
 
     }
 
