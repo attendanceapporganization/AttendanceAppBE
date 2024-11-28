@@ -14,10 +14,8 @@ import scrum.attendance_app.repository.LessonRepository;
 import scrum.attendance_app.repository.ProfessorRepository;
 
 import java.time.Instant;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -145,16 +143,25 @@ public class ProfessorService {
     }
 
 
-    public List getListCourse(String user) {
+    public List<CourseDTO> getListCourse(String user) {
+        Professor professor = professorRepository.findByEmail(user)
+                .orElseThrow(() -> new IllegalArgumentException("Professore non trovato"));
 
-        Professor professor = professorRepository.findByEmail(user).get();
+        List<Course> corsi = courseRepository.findByProfessorId(professor);
 
+        List<CourseDTO> courseDTOList = new ArrayList<>();
+        for (Course course : corsi) {
+            CourseDTO courseDTO = new CourseDTO();
+            courseDTO.setId(course.getId());
+            courseDTO.setName(course.getName());
+            courseDTO.setDescription(course.getDescription());
+            courseDTO.setCode(course.getCode());
+            courseDTOList.add(courseDTO);
+        }
 
-        var corsi = courseRepository.findByProfessorId(professor);
-
-        return corsi;
-
+        return courseDTOList;
     }
+
 
     public List<StudentDTO> getStudentsAttending(UUID lessonId) {
         return attendanceRepository.findAllByLessonId(lessonId).stream().map(attendance ->

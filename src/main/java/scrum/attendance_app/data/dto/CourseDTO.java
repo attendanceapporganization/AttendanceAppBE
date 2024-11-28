@@ -28,4 +28,6 @@ public class CourseDTO {
 
     @JsonProperty("idProfessor")
     private UUID idProfessor;
+
+    public CourseDTO() {}
 }

@@ -229,8 +229,11 @@ class ProfessorControllerTest {
         // Dati di test
         String token = "Bearer someValidToken";
         String userEmail = "professor@email.com";
-        List<String> mockCourses = Arrays.asList("Course 1", "Course 2", "Course 3");
+        CourseDTO course1 = new CourseDTO();
+        CourseDTO course2 = new CourseDTO();
+        CourseDTO course3 = new CourseDTO();
 
+        List<CourseDTO> mockCourses = Arrays.asList(course1, course2, course3);
 
         try (MockedStatic<TokenStore> mockedTokenStore = mockStatic(TokenStore.class)) {
             TokenStore tokenStoreMock = mock(TokenStore.class);
