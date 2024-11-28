@@ -2,33 +2,33 @@ package scrum.attendance_app.Service;
 
 import jakarta.persistence.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import scrum.attendance_app.data.dto.CourseDTO;
 import scrum.attendance_app.data.entities.Course;
 import scrum.attendance_app.data.entities.Registration;
 import scrum.attendance_app.data.entities.Student;
 import scrum.attendance_app.repository.CourseRepository;
 
-import scrum.attendance_app.repository.ProfessorRepository;
 import scrum.attendance_app.repository.RegistrationRepository;
 import scrum.attendance_app.repository.StudentRepository;
 
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserService {
     private final CourseRepository courseRepository;
     private final StudentRepository studentRepository;
     private final RegistrationRepository registrationRepository;
+    private final RegistrationService registrationService;
 
     @Autowired
-    public UserService(CourseRepository courseRepository, StudentRepository studentRepository, RegistrationRepository registrationRepository) {
+    public UserService(CourseRepository courseRepository, StudentRepository studentRepository, RegistrationRepository registrationRepository, RegistrationService registrationService) {
         this.courseRepository = courseRepository;
         this.studentRepository = studentRepository;
         this.registrationRepository = registrationRepository;
+        this.registrationService = registrationService;
     }
 
     // Sign up the course with student registration number and course code
@@ -61,6 +61,18 @@ public class UserService {
             return "Unable to sign up the course: " + e.getMessage();
         }
 
+    }
+
+    public List<Course> retrieveCourses(UUID id) {
+
+        List<Registration> registrations = registrationRepository.findByStudentId(id);
+        List<Course> courseList = new ArrayList<>();
+        for (Registration registration : registrations) {
+            Course course = registration.getCourse();
+            courseList.add(course);
+        }
+
+        return courseList;
     }
 
 }

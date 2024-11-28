@@ -3,7 +3,7 @@ package scrum.attendance_app.data.entities;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
@@ -14,7 +14,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Data
 public class Registration {
 
     @Id
@@ -26,8 +25,9 @@ public class Registration {
     @JoinColumn(name = "student", referencedColumnName = "id", nullable = false)
     private Student student;
 
+    @Getter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "course", referencedColumnName = "course_id", nullable = false)
     private Course course;
 
     @Column(name = "registrationdate", nullable = false)
