@@ -12,10 +12,12 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import scrum.attendance_app.Service.ProfessorService;
 import scrum.attendance_app.Service.RegistrationService;
 import scrum.attendance_app.config.SecurityConfig;
 import scrum.attendance_app.data.dto.ProfessorDTO;
 import scrum.attendance_app.data.dto.StudentDTO;
+import scrum.attendance_app.mapper.StudentMapper;
 import scrum.attendance_app.repository.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -26,7 +28,7 @@ import java.util.UUID;
 
 @WebMvcTest
 @Import(StudentRepository.class)
-@ComponentScan(basePackageClasses = {RegistrationService.class, SecurityConfig.class})
+@ComponentScan(basePackageClasses = {RegistrationService.class, SecurityConfig.class, StudentMapper.class})
 public class AuthenticationControllerTest {
 
     @Autowired
@@ -34,7 +36,8 @@ public class AuthenticationControllerTest {
 
     @Autowired
     private RegistrationService registrationService;
-
+    @Autowired
+    private ProfessorService professorService;
     @MockBean
     private ProfessorRepository professorRepository;
     @MockBean

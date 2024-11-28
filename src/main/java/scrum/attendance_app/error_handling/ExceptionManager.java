@@ -25,7 +25,7 @@ public class ExceptionManager {
         return new ResponseEntity<>("No lecture is going on for this course currently", HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(DataNotFoundException.class)
+    @ExceptionHandler(RegistrationNotFoundException.class)
     public ResponseEntity<String> registrationNotFoundExceptionHandler(){
         return new ResponseEntity<>("Student not registered to this course", HttpStatus.NOT_FOUND);
     }

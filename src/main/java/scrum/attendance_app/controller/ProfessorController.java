@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import scrum.attendance_app.Service.ProfessorService;
 import scrum.attendance_app.data.dto.CourseDTO;
+import scrum.attendance_app.data.dto.StudentDTO;
+import scrum.attendance_app.data.entities.Student;
 import scrum.attendance_app.security.TokenStore;
 
 import java.awt.*;
@@ -17,6 +19,7 @@ import scrum.attendance_app.data.entities.Lesson;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -115,5 +118,10 @@ public class ProfessorController {
 
 
         return new ResponseEntity<java.util.List>(corsi, HttpStatus.OK);
+    }
+
+    @GetMapping(path="students-attending")
+    public ResponseEntity<List<StudentDTO>> getStudentsAttending(@RequestParam UUID lessonId){
+        return new ResponseEntity<>(professorService.getStudentsAttending(lessonId), HttpStatus.OK);
     }
 }

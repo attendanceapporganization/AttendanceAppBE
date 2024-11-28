@@ -1,16 +1,13 @@
 package scrum.attendance_app.data.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "attendance_t")
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

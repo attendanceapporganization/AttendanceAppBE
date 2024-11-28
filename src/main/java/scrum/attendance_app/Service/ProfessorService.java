@@ -1,14 +1,14 @@
 package scrum.attendance_app.Service;
 
 import jakarta.persistence.PersistenceException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import scrum.attendance_app.data.dto.CourseDTO;
-import scrum.attendance_app.data.entities.Course;
-import scrum.attendance_app.data.entities.Lesson;
-import scrum.attendance_app.data.entities.Professor;
+import scrum.attendance_app.data.dto.StudentDTO;
+import scrum.attendance_app.data.entities.*;
 import scrum.attendance_app.error_handling.exceptions.DataNotFoundException;
+import scrum.attendance_app.mapper.StudentMapper;
+import scrum.attendance_app.repository.AttendanceRepository;
 import scrum.attendance_app.repository.CourseRepository;
 import scrum.attendance_app.repository.LessonRepository;
 import scrum.attendance_app.repository.ProfessorRepository;
@@ -20,19 +20,14 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class ProfessorService {
 
     private final CourseRepository courseRepository;
     private final ProfessorRepository professorRepository;
-
-    @Autowired
-    public ProfessorService(CourseRepository courseRepository, ProfessorRepository professorRepository) {
-        this.courseRepository = courseRepository;
-        this.professorRepository = professorRepository;
-    }
-
-    @Autowired
-    LessonRepository lessonRepository;
+    private final AttendanceRepository attendanceRepository;
+    private final LessonRepository lessonRepository;
+    private final StudentMapper studentMapper;
 
     // This method find the first course that have as name String name and as professor String professorEmail
     private Course alreadyHasThisCourse(String name, String professorEmail){
@@ -159,5 +154,10 @@ public class ProfessorService {
 
         return corsi;
 
+    }
+
+    public List<StudentDTO> getStudentsAttending(UUID lessonId) {
+        return attendanceRepository.findAllByLessonId(lessonId).stream().map(attendance ->
+             studentMapper.toDTO(attendance.getRegistration().getStudent())).toList();
     }
 }

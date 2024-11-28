@@ -3,20 +3,24 @@ package scrum.attendance_app.Service;
 import jakarta.persistence.PersistenceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import scrum.attendance_app.data.dto.CourseDTO;
-import scrum.attendance_app.data.entities.Course;
-import scrum.attendance_app.data.entities.Professor;
-import scrum.attendance_app.data.entities.Registry;
+import scrum.attendance_app.data.dto.StudentDTO;
+import scrum.attendance_app.data.entities.*;
+import scrum.attendance_app.mapper.StudentMapper;
+import scrum.attendance_app.repository.AttendanceRepository;
 import scrum.attendance_app.repository.CourseRepository;
 import scrum.attendance_app.repository.ProfessorRepository;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -25,7 +29,6 @@ public class ProfessorServiceTest {
 
     @Mock
     private CourseRepository courseRepository;
-
     @Mock
     private ProfessorRepository professorRepository;
 
