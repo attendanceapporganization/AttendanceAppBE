@@ -3,6 +3,7 @@ package scrum.attendance_app.data.entities;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
@@ -18,12 +19,13 @@ public class Registration {
     @Id
     @Column(name = "registration_id")
     @GeneratedValue(strategy = GenerationType.UUID)
-    public UUID id;
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student", referencedColumnName = "id", nullable = false)
     private Student student;
 
+    @Getter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course", referencedColumnName = "course_id", nullable = false)
     private Course course;

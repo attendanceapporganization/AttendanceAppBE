@@ -13,6 +13,8 @@ import scrum.attendance_app.repository.StudentRepository;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -132,6 +134,44 @@ class UserServiceTest {
         String result = userService.signUpCourse(registrationNumber, courseCode);
 
         assertTrue(result.contains("Unable to sign up the course: "));
+    }
+
+    @Test
+    void retrieveCourses_SuccessfulRetrieval() {
+        UUID studentId = UUID.randomUUID();
+
+        List<Registration> registrations = new ArrayList<>();
+        registrations.add(new Registration());
+
+        when(registrationRepository.findByStudentId(studentId)).thenReturn(registrations);
+
+        List<Course> result = userService.retrieveCourses(studentId);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(registrationRepository).findByStudentId(studentId);
+    }
+
+    @Test
+    void retrieveCourses_NoRegistrationsFound() {
+        UUID studentId = UUID.randomUUID();
+
+        when(registrationRepository.findByStudentId(studentId)).thenReturn(new ArrayList<>());
+
+        List<Course> result = userService.retrieveCourses(studentId);
+
+        assertTrue(result.isEmpty());
+        verify(registrationRepository).findByStudentId(studentId);
+    }
+
+    @Test
+    void retrieveCourses_DatabaseError() {
+        UUID studentId = UUID.randomUUID();
+
+        when(registrationRepository.findByStudentId(studentId)).thenThrow(new RuntimeException("Database error"));
+
+        assertThrows(RuntimeException.class, () -> userService.retrieveCourses(studentId));
+        verify(registrationRepository).findByStudentId(studentId);
     }
 
 }

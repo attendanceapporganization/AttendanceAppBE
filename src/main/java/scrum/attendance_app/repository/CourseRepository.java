@@ -8,6 +8,7 @@ import scrum.attendance_app.data.entities.Course;
 import scrum.attendance_app.data.entities.Professor;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -15,6 +16,8 @@ public interface CourseRepository extends JpaRepository<Course, UUID> {
 
     // To retrieve the first course with the given name
     Course findByName(String name);
+
+    Optional<Course> findById(UUID id);
 
     // To retrieve a list of all course that have the same name
     @Query("SELECT c FROM Course c WHERE LOWER(c.name) = LOWER(:name)")
