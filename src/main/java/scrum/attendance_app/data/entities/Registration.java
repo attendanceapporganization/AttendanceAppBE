@@ -33,4 +33,7 @@ public class Registration {
     @Column(name = "registrationdate", nullable = false)
     private LocalDate registrationDate;
 
+    public Student getStudent() {
+        return student;
+    }
 }
