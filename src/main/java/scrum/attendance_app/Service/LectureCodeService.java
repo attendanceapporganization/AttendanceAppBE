@@ -8,7 +8,6 @@ import scrum.attendance_app.error_handling.exceptions.*;
 import scrum.attendance_app.repository.*;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class LectureCodeService {
@@ -25,17 +24,26 @@ public class LectureCodeService {
     @Autowired
     private LessonRepository lessonRepository;
 
+    @Autowired //to delete
+    private CourseRepository courseRepository; //to delete
+
     @Transactional
-    public void registerAttendance(UUID studentId, String code, UUID courseId) throws DataNotFoundException, NoOngoingLectureException, WrongAttendanceCodeException {
-        Optional<Lesson> onGoingLecture = lessonRepository.findByCourseIdAndEndDateNull(courseId);
+    public void registerAttendance(String email, String code, String courseName) throws CourseNotFoundException, NoOngoingLectureException, WrongAttendanceCodeException {
+        Optional<Course> courseToTakeAttendanceFor = courseRepository.findByName(courseName);
+        if (courseToTakeAttendanceFor.isEmpty())
+            throw new CourseNotFoundException();
+
+        //UUID courseId = courseToTakeAttendanceFor.orElseThrow().getId(); //to delete, course id should be passed to this method
+        //Optional<Lesson> onGoingLecture = lessonRepository.findByCourseIdAndEndDateNull(courseId); //this query should be used instead: every lesson must have an end date set
+        Optional<Lesson> onGoingLecture = lessonRepository.findLessonWithMaxStartDateByCourse(courseToTakeAttendanceFor.get());
         if (onGoingLecture.isEmpty())
             throw new NoOngoingLectureException();
 
-        Optional<Student> studentOpt = studentRepository.findById(studentId);
+        Optional<Student> studentOpt = studentRepository.findByEmail(email);
         if (studentOpt.isEmpty())
             throw new StudentNotFoundException();
 
-        Optional<Registration> registration = registrationRepository.findByStudentIdAndCourseId(studentId, courseId);
+        Optional<Registration> registration = registrationRepository.findByStudentIdAndCourseId(studentOpt.get().getId(), courseToTakeAttendanceFor.get().getId());
         if (registration.isEmpty())
             throw new RegistrationNotFoundException();
 
@@ -49,7 +57,8 @@ public class LectureCodeService {
                         .lesson(onGoingLecture.get())
                         .build());
             }
-            else
+            else {
                 throw new WrongAttendanceCodeException();
+            }
     }
 }

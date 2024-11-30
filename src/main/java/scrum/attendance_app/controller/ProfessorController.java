@@ -84,7 +84,7 @@ public class ProfessorController {
     }
 
     @GetMapping("startLesson")
-    public String createAndStartLesson(@RequestParam UUID courseId){
+    public ResponseEntity<LessonDTO> createAndStartLesson(@RequestParam UUID courseId){
         DigitCode digitCode = DigitCode.createDigitCode();
         Lesson lesson = Lesson.builder()
                 .startDate(Date.from(Instant.now()))
@@ -92,9 +92,9 @@ public class ProfessorController {
                 .digitCode(digitCode)
                 .course(professorService.retrieveCourse(courseId)) // Link to the specified Course
                 .build();
-        Lesson lesson1 = professorService.createLesson(lesson);
-        return "Lesson started: code" + digitCode.formattedValue() + " id: " + professorService.createLesson(lesson);
-        //return new ResponseEntity<>(professorService.createLesson(lesson), HttpStatus.OK);
+        //Lesson lesson1 = professorService.createLesson(lesson);
+        //return "Lesson started: code" + digitCode.formattedValue() + " id: " + professorService.createLesson(lesson);
+        return new ResponseEntity<>(professorService.createLesson(lesson), HttpStatus.OK);
     }
 
     @PutMapping("terminateLesson")

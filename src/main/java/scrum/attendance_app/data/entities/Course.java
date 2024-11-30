@@ -80,7 +80,7 @@ public class Course {
     public void generateCourseCode(){
         if (!this.isDefinitiveCode){
             StringBuilder sb = new StringBuilder();
-            String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#@+*^?!_-";
+            String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#@+*?!_-";
 
             for (int i = 0; i < 8; i++) {
                 int index = (int) (Math.random() * characters.length());

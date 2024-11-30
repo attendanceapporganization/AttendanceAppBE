@@ -42,11 +42,11 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/student/takeAttendance")
+    /*@PostMapping("/student/takeAttendance")
     public ResponseEntity<String> lectureCode(@RequestParam UUID studentId, @RequestParam String code, @RequestParam UUID courseId) throws NoOngoingLectureException, WrongAttendanceCodeException {
         lectureCodeService.registerAttendance(studentId, code, courseId);
         return new ResponseEntity<>("you are present at this lesson", HttpStatus.OK);
-    }
+    }*/
 
     @PostMapping("/student/signUpCourse")
     public ResponseEntity<String> signUpCourse(@RequestParam String registrationNumber, @RequestParam String courseCode) {
@@ -66,5 +66,10 @@ public class UserController {
         return new ResponseEntity<>("Unable to sign up the course", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @PostMapping("/student/takeAttendance")
+    public ResponseEntity<String> takeAttendance(@RequestParam String username, @RequestParam String code, @RequestParam String courseName) throws NoOngoingLectureException, WrongAttendanceCodeException {
+        lectureCodeService.registerAttendance(username, code, courseName);
+        return new ResponseEntity<>("you are present at this lesson", HttpStatus.OK);
+    }
 
 }

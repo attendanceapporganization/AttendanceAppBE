@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import scrum.attendance_app.error_handling.exceptions.*;
 
 @ControllerAdvice
@@ -31,8 +30,13 @@ public class ExceptionManager {
     }
 
     @ExceptionHandler(StudentNotFoundException.class)
-    public ResponseEntity<String> StudentNotFoundExceptionHandler(){
+    public ResponseEntity<String> studentNotFoundExceptionHandler(){
         return new ResponseEntity<>("Student not found", HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(LessonNotFoundException.class)
+    public ResponseEntity<String> lessonNotFoundExceptionHandler(){
+        return new ResponseEntity<>("Lesson not found", HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(WrongAttendanceCodeException.class)

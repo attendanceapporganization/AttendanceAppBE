@@ -4,9 +4,12 @@ import jakarta.persistence.PersistenceException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import scrum.attendance_app.data.dto.CourseDTO;
+import scrum.attendance_app.data.dto.LessonDTO;
 import scrum.attendance_app.data.dto.StudentDTO;
 import scrum.attendance_app.data.entities.*;
-import scrum.attendance_app.error_handling.exceptions.DataNotFoundException;
+import scrum.attendance_app.error_handling.exceptions.CourseNotFoundException;
+import scrum.attendance_app.error_handling.exceptions.LessonNotFoundException;
+import scrum.attendance_app.mapper.LessonMapper;
 import scrum.attendance_app.mapper.StudentMapper;
 import scrum.attendance_app.repository.AttendanceRepository;
 import scrum.attendance_app.repository.CourseRepository;
@@ -15,7 +18,6 @@ import scrum.attendance_app.repository.ProfessorRepository;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -26,6 +28,7 @@ public class ProfessorService {
     private final AttendanceRepository attendanceRepository;
     private final LessonRepository lessonRepository;
     private final StudentMapper studentMapper;
+    private final LessonMapper lessonMapper;
 
     // This method find the first course that have as name String name and as professor String professorEmail
     private Course alreadyHasThisCourse(String name, String professorEmail){
@@ -126,15 +129,15 @@ public class ProfessorService {
     }
 
     public Course retrieveCourse(UUID courseId) {
-        return courseRepository.findById(courseId).orElseThrow(()->new DataNotFoundException("Course not found"));
+        return courseRepository.findById(courseId).orElseThrow(CourseNotFoundException::new);
     }
 
-    public Lesson createLesson(Lesson lesson) {
-        return lessonRepository.save(lesson);
+    public LessonDTO createLesson(Lesson lesson) {
+        return lessonMapper.toDto(lessonRepository.save(lesson));
     }
 
     public Lesson retrieveLesson(UUID lessonId) {
-        return lessonRepository.findById(lessonId).orElseThrow(()->new DataNotFoundException("lesson not found"));
+        return lessonRepository.findById(lessonId).orElseThrow(LessonNotFoundException::new);
     }
 
     public void terminateLesson(Lesson lesson) {

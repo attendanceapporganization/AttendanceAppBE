@@ -19,5 +19,5 @@ public class LessonDTO {
 
     private UUID courseId;
 
-    private DigitCode digitCode;
+    private String digitCode;
 }
