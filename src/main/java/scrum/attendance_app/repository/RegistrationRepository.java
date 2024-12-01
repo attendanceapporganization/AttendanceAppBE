@@ -14,4 +14,6 @@ public interface RegistrationRepository extends JpaRepository<Registration, UUID
     List<Registration> findAll();
 
     Optional<Registration> findByStudentIdAndCourseId(UUID studentId, UUID courseId);
+
+    List<Registration> findByStudentId(UUID studentId);
 }
