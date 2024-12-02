@@ -9,6 +9,7 @@ import scrum.attendance_app.Service.DigitCodeGenerator;
 import scrum.attendance_app.Service.LectureCodeService;
 import scrum.attendance_app.Service.ProfessorService;
 import scrum.attendance_app.Service.UserService;
+import scrum.attendance_app.data.dto.CourseDTO;
 import scrum.attendance_app.data.entities.Course;
 import scrum.attendance_app.data.entities.Student;
 import scrum.attendance_app.error_handling.exceptions.NoOngoingLectureException;
@@ -53,8 +54,12 @@ public class UserController {
     }*/
 
     @PostMapping("/student/signUpCourse")
-    public ResponseEntity<String> signUpCourse(@RequestParam String registrationNumber, @RequestParam String courseCode) {
-        String status = userService.signUpCourse(registrationNumber, courseCode);
+    public ResponseEntity<String> signUpCourse(@RequestHeader("Authorization") String authorizationHeader, @RequestParam String courseCode) throws  Exception{
+        String token = authorizationHeader.replace("Bearer ", "");
+        TokenStore.getInstance().verifyToken(token);
+        String user = TokenStore.getInstance().getUser(token);
+
+        String status = userService.signUpCourse(user, courseCode);
 
         if(status.equals("Course not found")){
             return new ResponseEntity<>("Non-existing course", HttpStatus.NOT_FOUND);
@@ -76,8 +81,12 @@ public class UserController {
         return new ResponseEntity<>("you are present at this lesson", HttpStatus.OK);
     }
     @GetMapping(path = "/student/retrieveCourses")
-    public ResponseEntity<java.util.List> retrieveCourses(@RequestParam UUID userID) throws NoOngoingLectureException, WrongAttendanceCodeException {
-        java.util.List courses = userService.retrieveCourses(userID);
+    public ResponseEntity<java.util.List> retrieveCourses(@RequestHeader("Authorization") String authorizationHeader) throws NoOngoingLectureException, WrongAttendanceCodeException, Exception {
+        String token = authorizationHeader.replace("Bearer ", "");
+        TokenStore.getInstance().verifyToken(token);
+        String user = TokenStore.getInstance().getUser(token);
+
+        java.util.List courses = userService.retrieveCourses(user);
         return new ResponseEntity<java.util.List>(courses, HttpStatus.OK);
     }
 

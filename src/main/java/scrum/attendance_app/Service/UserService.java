@@ -3,6 +3,7 @@ package scrum.attendance_app.Service;
 import jakarta.persistence.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import scrum.attendance_app.data.dto.CourseDTO;
 import scrum.attendance_app.data.entities.Course;
 import scrum.attendance_app.data.entities.Registration;
 import scrum.attendance_app.data.entities.Student;
@@ -32,9 +33,13 @@ public class UserService {
     }
 
     // Sign up the course with student registration number and course code
-    public String signUpCourse(String registrationNumber, String courseCode) {
+    public String signUpCourse(String user, String courseCode) {
         // Try to get the student with a certain registration number and course with a certain course code
-        Student student = studentRepository.findByRegistrationNumber(registrationNumber);
+        Student student = null;
+        if(studentRepository.findByEmail(user).isPresent()) {
+            student = studentRepository.findByEmail(user).get();
+        }
+
         Course course = courseRepository.findCourseByCode(courseCode);
 
         // If the course code is not associated with a course there aren't course
@@ -63,16 +68,30 @@ public class UserService {
 
     }
 
-    public List<Course> retrieveCourses(UUID id) {
+    public List<CourseDTO> retrieveCourses(String user) {
+        Student student = null;
+        if(studentRepository.findByEmail(user).isPresent()) {
+            student = studentRepository.findByEmail(user).get();
+        }
 
-        List<Registration> registrations = registrationRepository.findByStudentId(id);
+        List<Registration> registrations = registrationRepository.findByStudentId(student.getId());
         List<Course> courseList = new ArrayList<>();
         for (Registration registration : registrations) {
             Course course = registration.getCourse();
             courseList.add(course);
         }
 
-        return courseList;
+        List<CourseDTO> courseDTOList = new ArrayList<>();
+        for (Course course : courseList) {
+            CourseDTO courseDTO = new CourseDTO();
+            courseDTO.setId(course.getId());
+            courseDTO.setName(course.getName());
+            courseDTO.setDescription(course.getDescription());
+            courseDTO.setCode(course.getCode());
+            courseDTOList.add(courseDTO);
+        }
+
+        return courseDTOList;
     }
 
 }
