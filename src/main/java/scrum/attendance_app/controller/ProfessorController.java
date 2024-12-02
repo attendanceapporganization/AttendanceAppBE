@@ -1,14 +1,17 @@
 package scrum.attendance_app.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import scrum.attendance_app.Service.LectureCodeService;
 import scrum.attendance_app.Service.ProfessorService;
 import scrum.attendance_app.data.dto.CourseDTO;
 import scrum.attendance_app.data.dto.StudentDTO;
+import scrum.attendance_app.data.entities.Course;
 import scrum.attendance_app.data.entities.Student;
 import scrum.attendance_app.security.TokenStore;
 
@@ -24,14 +27,11 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(path="/api/v1", produces = "application/json")
+@AllArgsConstructor
 @CrossOrigin(origins = "http://localhost:8080")
 public class ProfessorController {
 
     private final ProfessorService professorService;
-
-    public ProfessorController(ProfessorService professorService) {
-        this.professorService = professorService;
-    }
 
     // Method to create course with give courseDTO
     // Possible httpStatus OK,CONFLICT and INTERNAL_SERVER_ERROR
@@ -97,12 +97,11 @@ public class ProfessorController {
         return new ResponseEntity<>(professorService.createLesson(lesson), HttpStatus.OK);
     }
 
-    @PutMapping("terminateLesson")
+    @GetMapping("terminateLesson")
     @Transactional
-    public String terminateLesson(@RequestParam UUID lessonId){
-        Lesson lesson = professorService.retrieveLesson(lessonId);
-        lesson.setEndDate(Date.from(Instant.now()));
-        professorService.terminateLesson(lesson);
+    public String terminateLesson(@RequestParam UUID courseId){
+        Course course = professorService.retrieveCourse(courseId);
+        professorService.terminateLessonOfCourse(course);
         return "Lesson terminated.";
     }
 

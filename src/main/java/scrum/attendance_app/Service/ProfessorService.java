@@ -3,6 +3,7 @@ package scrum.attendance_app.Service;
 import jakarta.persistence.PersistenceException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import scrum.attendance_app.data.dto.CourseDTO;
 import scrum.attendance_app.data.dto.LessonDTO;
 import scrum.attendance_app.data.dto.StudentDTO;
@@ -140,12 +141,6 @@ public class ProfessorService {
         return lessonRepository.findById(lessonId).orElseThrow(LessonNotFoundException::new);
     }
 
-    public void terminateLesson(Lesson lesson) {
-        lesson.setEndDate(Date.from(Instant.now()));
-        lessonRepository.save(lesson);
-    }
-
-
     public List<CourseDTO> getListCourse(String user) {
         Professor professor = professorRepository.findByEmail(user)
                 .orElseThrow(() -> new IllegalArgumentException("Professore non trovato"));
@@ -169,5 +164,11 @@ public class ProfessorService {
     public List<StudentDTO> getStudentsAttending(UUID lessonId) {
         return attendanceRepository.findAllByLessonId(lessonId).stream().map(attendance ->
              studentMapper.toDTO(attendance.getRegistration().getStudent())).toList();
+    }
+
+    public void terminateLessonOfCourse(Course course) {
+        Lesson lastLesson = lessonRepository.findLessonWithMaxStartDateByCourse(course).orElseThrow(LessonNotFoundException::new);
+        lastLesson.setEndDate(Date.from(Instant.now()));
+        lessonRepository.save(lastLesson);
     }
 }
