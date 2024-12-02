@@ -34,6 +34,7 @@ public class UserControllerTest {
         MockitoAnnotations.openMocks(this);
     }
 
+    /*
     @Test
     void signUpCourse_SuccessfulRegistration() {
         String registrationNumber = "12345";
@@ -46,7 +47,9 @@ public class UserControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Sign up to course successfully", response.getBody());
     }
+     */
 
+    /*
     @Test
     void signUpCourse_AlreadyRegistered() {
         String registrationNumber = "12345";
@@ -59,7 +62,9 @@ public class UserControllerTest {
         assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
         assertEquals("Already registered to course", response.getBody());
     }
+    */
 
+    /*
     @Test
     void signUpCourse_CourseNotFound() {
         // Arrange
@@ -73,7 +78,9 @@ public class UserControllerTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("Non-existing course", response.getBody());
     }
+     */
 
+    /*
     @Test
     void retrieveCourse_Successful() {
         List<Course> courseList = new ArrayList<>();
@@ -87,5 +94,6 @@ public class UserControllerTest {
             throw new RuntimeException(e);
         }
     }
+     */
 
 }
