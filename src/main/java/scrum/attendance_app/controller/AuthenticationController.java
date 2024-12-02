@@ -84,6 +84,7 @@ public class AuthenticationController {
             }
             try {
                 String token = TokenStore.getInstance().createToken(Map.of("email", email, "role", role));
+                System.out.println("Generated Token: " + token);
                 response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
             } catch (Exception e) {
                 throw new TokenCreationException("Errore nella creazione del token: " + e.getMessage());
