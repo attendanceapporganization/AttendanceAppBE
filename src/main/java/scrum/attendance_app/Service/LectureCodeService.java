@@ -36,7 +36,7 @@ public class LectureCodeService {
         //UUID courseId = courseToTakeAttendanceFor.orElseThrow().getId(); //to delete, course id should be passed to this method
         //Optional<Lesson> onGoingLecture = lessonRepository.findByCourseIdAndEndDateNull(courseId); //this query should be used instead: every lesson must have an end date set
         Optional<Lesson> onGoingLecture = lessonRepository.findLessonWithMaxStartDateByCourse(courseToTakeAttendanceFor.get());
-        if (onGoingLecture.isEmpty())
+        if (onGoingLecture.isEmpty() || onGoingLecture.get().getEndDate() != null)
             throw new NoOngoingLectureException();
 
         Optional<Student> studentOpt = studentRepository.findByEmail(email);
