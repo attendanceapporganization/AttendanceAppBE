@@ -51,19 +51,18 @@ public class ProfessorController {
 
     // Controller function to delete the course with given name and professor email
     // Possible httpStatus OK,NOT_FOUND and INTERNAL_SERVER_ERROR
-    @PostMapping(path = "/deleteCourse")
-    public ResponseEntity<String> deleteCourse(@RequestParam("name") String name, @RequestParam("professorEmail") String professorEmail) {
-        String deleteCourseStatus = professorService.deleteCourse(name, professorEmail);
-
-        if(deleteCourseStatus.equals("Deleted")) {
-            return new ResponseEntity<>("Course deleted successfully", HttpStatus.OK);
+    @PostMapping("/deleteCourse")
+    public ResponseEntity<String> deleteCourse(
+            @RequestParam String name,
+            @RequestParam String professorEmail) {
+        String result = professorService.deleteCourse(name, professorEmail);
+        if ("Deleted".equals(result)) {
+            return ResponseEntity.ok("Course successfully deleted");
+        } else if ("Professor does not exist".equals(result) || "Course not found".equals(result)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(result);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
         }
-
-        else if(deleteCourseStatus.equals("Course not found")) {
-            return new ResponseEntity<>("Non-existing course", HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>("Unable to delete the course", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PostMapping(path = "/editCourse")
