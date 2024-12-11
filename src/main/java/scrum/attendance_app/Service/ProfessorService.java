@@ -171,4 +171,25 @@ public class ProfessorService {
         lastLesson.setEndDate(Date.from(Instant.now()));
         lessonRepository.save(lastLesson);
     }
+
+
+    public List<LessonDTO> getListLesson(String user, UUID courseId) {
+        Professor professor = professorRepository.findByEmail(user)
+                .orElseThrow(() -> new IllegalArgumentException("Professore non trovato"));
+
+
+
+        List<Lesson> lezioni = lessonRepository.findByCourseId(courseId);
+
+        List<LessonDTO> lessonDTOList = new ArrayList<>();
+        for (Lesson lesson : lezioni) {
+            LessonDTO lessonDTO = new LessonDTO();
+            lessonDTO.setId(lesson.getId());
+            lessonDTO.setStartDate(lesson.getStartDate());
+            lessonDTO.setEndDate(lesson.getEndDate());
+            lessonDTOList.add(lessonDTO);
+        }
+
+        return lessonDTOList;
+    }
 }

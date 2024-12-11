@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import scrum.attendance_app.data.entities.Course;
 import scrum.attendance_app.data.entities.Lesson;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,6 +16,8 @@ public interface LessonRepository extends JpaRepository<Lesson, UUID> {
 
     @Query("select lesson FROM Lesson lesson WHERE lesson.startDate = (select MAX(l2.startDate) from Lesson l2 where l2.course=:course)")
     Optional<Lesson> findLessonWithMaxStartDateByCourse(@Param("course") Course course);
+
+    List<Lesson> findByCourseId(UUID courseID);
 
 
 }

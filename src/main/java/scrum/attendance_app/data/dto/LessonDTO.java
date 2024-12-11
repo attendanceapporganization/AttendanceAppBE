@@ -20,4 +20,7 @@ public class LessonDTO {
     private UUID courseId;
 
     private String digitCode;
+
+    private Date startDate;
+    private Date endDate;
 }

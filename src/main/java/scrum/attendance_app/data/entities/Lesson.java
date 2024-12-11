@@ -18,7 +18,7 @@ import java.util.UUID;
 public class Lesson {
 
     @Id
-    @Column(name = "lesson_id")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 

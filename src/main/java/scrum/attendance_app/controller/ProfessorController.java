@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import scrum.attendance_app.Service.LectureCodeService;
 import scrum.attendance_app.Service.ProfessorService;
+import scrum.attendance_app.Service.UserService;
 import scrum.attendance_app.data.dto.CourseDTO;
 import scrum.attendance_app.data.dto.StudentDTO;
 import scrum.attendance_app.data.entities.Course;
@@ -121,5 +122,15 @@ public class ProfessorController {
     @GetMapping(path="students-attending")
     public ResponseEntity<List<StudentDTO>> getStudentsAttending(@RequestParam UUID lessonId){
         return new ResponseEntity<>(professorService.getStudentsAttending(lessonId), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/ListLessons")
+    public ResponseEntity<java.util.List> getListLessons(
+            @RequestHeader("Authorization") String authorizationHeader, @RequestParam UUID Course) throws Exception {
+
+        java.util.List lezioni = professorService.getListLesson(UserService.readToken(authorizationHeader), Course);
+
+
+        return new ResponseEntity<java.util.List>(lezioni, HttpStatus.OK);
     }
 }

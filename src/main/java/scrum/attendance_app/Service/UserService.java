@@ -1,5 +1,6 @@
 package scrum.attendance_app.Service;
 
+import com.nimbusds.jose.JOSEException;
 import jakarta.persistence.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +12,9 @@ import scrum.attendance_app.repository.CourseRepository;
 
 import scrum.attendance_app.repository.RegistrationRepository;
 import scrum.attendance_app.repository.StudentRepository;
+import scrum.attendance_app.security.TokenStore;
 
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,4 +97,10 @@ public class UserService {
         return courseDTOList;
     }
 
+    public static String readToken(String authorizationHeader) throws ParseException, JOSEException {
+        String token = authorizationHeader.replace("Bearer ", "");
+        TokenStore.getInstance().verifyToken(token);
+        String user = TokenStore.getInstance().getUser(token);
+        return user;
+    }
 }
