@@ -14,6 +14,7 @@ import scrum.attendance_app.data.dto.CourseDTO;
 import scrum.attendance_app.data.dto.StudentDTO;
 import scrum.attendance_app.data.entities.Course;
 import scrum.attendance_app.data.entities.Student;
+import scrum.attendance_app.mapper.StudentMapper;
 import scrum.attendance_app.security.TokenStore;
 
 import java.awt.*;
@@ -33,6 +34,7 @@ import java.util.UUID;
 public class ProfessorController {
 
     private final ProfessorService professorService;
+    private final StudentMapper studentMapper;
 
     // Method to create course with give courseDTO
     // Possible httpStatus OK,CONFLICT and INTERNAL_SERVER_ERROR
@@ -132,5 +134,11 @@ public class ProfessorController {
 
 
         return new ResponseEntity<java.util.List>(lezioni, HttpStatus.OK);
+    }
+
+    @PutMapping("confirm")
+    public String changeStudentsAttending(@RequestParam UUID lessonId, @RequestBody List<StudentDTO> confirmedStudents){
+        professorService.changeStudentsAttending(lessonId, confirmedStudents.stream().map(studentMapper::toEntity).toList());
+        return "ok";
     }
 }
