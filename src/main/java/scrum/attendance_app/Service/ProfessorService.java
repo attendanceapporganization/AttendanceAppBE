@@ -12,13 +12,11 @@ import scrum.attendance_app.error_handling.exceptions.CourseNotFoundException;
 import scrum.attendance_app.error_handling.exceptions.LessonNotFoundException;
 import scrum.attendance_app.mapper.LessonMapper;
 import scrum.attendance_app.mapper.StudentMapper;
-import scrum.attendance_app.repository.AttendanceRepository;
-import scrum.attendance_app.repository.CourseRepository;
-import scrum.attendance_app.repository.LessonRepository;
-import scrum.attendance_app.repository.ProfessorRepository;
+import scrum.attendance_app.repository.*;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Predicate;
 
 @Service
 @AllArgsConstructor
@@ -30,6 +28,7 @@ public class ProfessorService {
     private final LessonRepository lessonRepository;
     private final StudentMapper studentMapper;
     private final LessonMapper lessonMapper;
+    private final RegistrationRepository registrationRepository;
 
     // This method find the first course that have as name String name and as professor String professorEmail
     private Course alreadyHasThisCourse(String name, String professorEmail){
@@ -170,5 +169,26 @@ public class ProfessorService {
         Lesson lastLesson = lessonRepository.findLessonWithMaxStartDateByCourse(course).orElseThrow(LessonNotFoundException::new);
         lastLesson.setEndDate(Date.from(Instant.now()));
         lessonRepository.save(lastLesson);
+    }
+
+    public void changeStudentsAttending(UUID lessonId, List<Student> confirmedAttendees) {
+        List<Student> oldAttendees = attendanceRepository.findAllByLessonId(lessonId).stream().map(attendance ->
+                (attendance.getRegistration().getStudent())).toList();
+        List<Student> toRemove = oldAttendees.stream().filter(Predicate.not(confirmedAttendees::contains)).toList();
+        List<Attendance> attendancesForLesson = attendanceRepository.findAllByLessonId(lessonId);
+        for (Attendance attendance : attendancesForLesson)
+            if (toRemove.stream().map(Student::getId).toList().contains(attendance.getRegistration().getStudent().getId()))
+                attendanceRepository.delete(attendance);
+        attendancesForLesson = attendanceRepository.findAllByLessonId(lessonId);
+        for (Student student : confirmedAttendees){
+            List<Student> attendingStudents = attendancesForLesson.stream().map(attendance -> attendance.getRegistration().getStudent()).toList();
+            if (!attendingStudents.contains(student)){
+                Optional<Lesson> lesson = lessonRepository.findById(lessonId);
+                Course relatedCourse = lesson.get().getCourse();
+                Optional<Registration> registration = registrationRepository.findByStudentIdAndCourseId(student.getId(), relatedCourse.getId());
+                attendanceRepository.save(Attendance.builder().lesson(lesson.get()).registration(registration.get()).build());
+            }
+
+        }
     }
 }
