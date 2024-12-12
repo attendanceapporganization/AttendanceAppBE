@@ -97,14 +97,14 @@ class ProfessorControllerTest {
         String name = "Course1";
         String professorEmail = "email@email.it";
 
-        String expectedMessage = "Deleted";
+        String expectedMessage = "Course successfully deleted";
 
-        when(professorService.deleteCourse(name, professorEmail)).thenReturn(expectedMessage);
+        when(professorService.deleteCourse(name, professorEmail)).thenReturn("Deleted");
 
         ResponseEntity<String> result = controller.deleteCourse(name, professorEmail);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals("Course deleted successfully", result.getBody());
+        assertEquals(expectedMessage, result.getBody());
 
         verify(professorService, times(1)).deleteCourse(name, professorEmail);
     }
@@ -121,7 +121,7 @@ class ProfessorControllerTest {
         ResponseEntity<String> result = controller.deleteCourse(name, professorEmail);
 
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
-        assertEquals("Non-existing course", result.getBody());
+        assertEquals(expectedMessage, result.getBody());
 
         verify(professorService, times(1)).deleteCourse(name, professorEmail);
     }

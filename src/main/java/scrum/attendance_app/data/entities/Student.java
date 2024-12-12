@@ -1,9 +1,6 @@
 package scrum.attendance_app.data.entities;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EqualsAndHashCode
 public class Student {
 
     @Id
@@ -29,14 +27,17 @@ public class Student {
     @Column(name = "email", length = 100, nullable = false, unique = true)
     private String email;
 
+    @EqualsAndHashCode.Exclude
     @Column(name = "password", length = 100, nullable = false)
     private String password;
 
     @OneToOne(cascade = CascadeType.ALL)
     @MapsId
     @JoinColumn(name = "ID")
+    @EqualsAndHashCode.Exclude
     private Registry registry;
 
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Registration> registrations = new ArrayList<>();
 
