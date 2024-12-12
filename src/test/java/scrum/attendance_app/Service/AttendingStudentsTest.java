@@ -20,6 +20,7 @@ import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
+@TestPropertySource("classpath:application-test.properties")
 public class AttendingStudentsTest {
     @MockBean
     private AttendanceRepository attendanceRepository;
