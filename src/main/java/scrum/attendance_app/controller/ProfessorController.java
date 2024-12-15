@@ -10,17 +10,15 @@ import org.springframework.web.bind.annotation.*;
 import scrum.attendance_app.Service.LectureCodeService;
 import scrum.attendance_app.Service.ProfessorService;
 import scrum.attendance_app.Service.UserService;
+import scrum.attendance_app.data.dto.AttendanceDTO;
 import scrum.attendance_app.data.dto.CourseDTO;
 import scrum.attendance_app.data.dto.StudentDTO;
-import scrum.attendance_app.data.entities.Course;
-import scrum.attendance_app.data.entities.Student;
+import scrum.attendance_app.data.entities.*;
 import scrum.attendance_app.mapper.StudentMapper;
 import scrum.attendance_app.security.TokenStore;
 
 import java.awt.*;
 import scrum.attendance_app.data.dto.LessonDTO;
-import scrum.attendance_app.data.entities.DigitCode;
-import scrum.attendance_app.data.entities.Lesson;
 
 import java.time.Instant;
 import java.util.Date;
@@ -141,4 +139,16 @@ public class ProfessorController {
         professorService.changeStudentsAttending(lessonId, confirmedStudents.stream().map(studentMapper::toEntity).toList());
         return "ok";
     }
+
+    @GetMapping("subscribers")
+    public ResponseEntity<List<StudentDTO>> getSubscribersForCourse(@RequestParam UUID courseId){
+        return new ResponseEntity<>(professorService.getSubscribersForCourse(courseId), HttpStatus.OK);
+    }
+
+    @GetMapping("attendances")
+    public ResponseEntity<List<AttendanceDTO>> getAttendancesByCourse(@RequestParam UUID courseId){
+        return new ResponseEntity<>(professorService.getAttendancesForCourse(courseId), HttpStatus.OK);
+    }
+
+
 }
