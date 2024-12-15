@@ -14,15 +14,10 @@ import java.util.UUID;
 @Builder
 public class AttendanceDTO {
 
+    @JsonProperty("attendanceId")
     private UUID id;
-    private UUID registrationId;
-
-    @JsonProperty("attendanceDate")
-    private LocalDate attendanceDate;
-
-    @JsonProperty("isPresent")
-    private Boolean isPresent;
-
-    @JsonProperty("hours")
-    private String hours;
+    @JsonProperty("studentId")
+    private UUID studentId;
+    @JsonProperty("lessonId")
+    private UUID lessonId;
 }

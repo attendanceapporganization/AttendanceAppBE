@@ -2,14 +2,19 @@ package scrum.attendance_app.Service;
 
 import jakarta.persistence.PersistenceException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import scrum.attendance_app.data.dto.AttendanceDTO;
 import scrum.attendance_app.data.dto.CourseDTO;
 import scrum.attendance_app.data.dto.LessonDTO;
 import scrum.attendance_app.data.dto.StudentDTO;
 import scrum.attendance_app.data.entities.*;
 import scrum.attendance_app.error_handling.exceptions.CourseNotFoundException;
 import scrum.attendance_app.error_handling.exceptions.LessonNotFoundException;
+import scrum.attendance_app.mapper.AttendanceMapper;
 import scrum.attendance_app.mapper.LessonMapper;
 import scrum.attendance_app.mapper.StudentMapper;
 import scrum.attendance_app.repository.*;
@@ -28,6 +33,7 @@ public class ProfessorService {
     private final LessonRepository lessonRepository;
     private final StudentMapper studentMapper;
     private final LessonMapper lessonMapper;
+    private final AttendanceMapper attendanceMapper;
     private final RegistrationRepository registrationRepository;
 
     // This method find the first course that have as name String name and as professor String professorEmail
@@ -212,4 +218,14 @@ public class ProfessorService {
 
         }
     }
+
+    public List<StudentDTO> getSubscribersForCourse(UUID courseId) {
+        List<Student> subscribedStudents = registrationRepository.findAllByCourseId(courseId).stream().map(Registration::getStudent).toList();
+        return subscribedStudents.stream().map(studentMapper::toDTO).toList();
+    }
+
+    public List<AttendanceDTO> getAttendancesForCourse(UUID courseId) {
+        return attendanceRepository.findAllByCourse(courseId).stream().map(attendanceMapper::toDto).toList();
+    }
+
 }
