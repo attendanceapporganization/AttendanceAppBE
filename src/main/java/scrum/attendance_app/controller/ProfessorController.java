@@ -1,13 +1,11 @@
 package scrum.attendance_app.controller;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import scrum.attendance_app.Service.LectureCodeService;
 import scrum.attendance_app.Service.ProfessorService;
 import scrum.attendance_app.Service.UserService;
 import scrum.attendance_app.data.dto.AttendanceDTO;
@@ -17,7 +15,6 @@ import scrum.attendance_app.data.entities.*;
 import scrum.attendance_app.mapper.StudentMapper;
 import scrum.attendance_app.security.TokenStore;
 
-import java.awt.*;
 import scrum.attendance_app.data.dto.LessonDTO;
 
 import java.time.Instant;
@@ -95,6 +92,11 @@ public class ProfessorController {
         //Lesson lesson1 = professorService.createLesson(lesson);
         //return "Lesson started: code" + digitCode.formattedValue() + " id: " + professorService.createLesson(lesson);
         return new ResponseEntity<>(professorService.createLesson(lesson), HttpStatus.OK);
+    }
+
+    @GetMapping("updateLesson")
+    public ResponseEntity<LessonDTO> updateLessonCode(@RequestParam UUID courseId){
+        return new ResponseEntity<>(professorService.updateCodeForOpenLessonByCourse(courseId,DigitCode.createDigitCode()), HttpStatus.OK);
     }
 
     @GetMapping("terminateLesson")
