@@ -2,9 +2,6 @@ package scrum.attendance_app.Service;
 
 import jakarta.persistence.PersistenceException;
 import lombok.AllArgsConstructor;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import scrum.attendance_app.data.dto.AttendanceDTO;
@@ -225,7 +222,27 @@ public class ProfessorService {
     }
 
     public List<AttendanceDTO> getAttendancesForCourse(UUID courseId) {
-        return attendanceRepository.findAllByCourse(courseId).stream().map(attendanceMapper::toDto).toList();
+        List<Attendance> attendances = attendanceRepository.findAllByCourse(courseId);
+        Date now = Date.from(Instant.now());
+        Date startDateRange, endDateRange;
+        if (now.getMonth() < 8){
+            startDateRange = new Date(now.getYear()-1,8,1);
+            endDateRange = new Date(now.getYear(), 6,31);
+        }
+        else {
+            startDateRange = new Date(now.getYear(),8,1);
+            endDateRange = new Date(now.getYear()+1, 6,31);
+        }
+        List<Attendance> inThisAcademicYear = attendances.stream().filter(attendance -> attendance.getLesson().getStartDate().after(startDateRange) && attendance.getLesson().getStartDate().before(endDateRange)).toList();
+        return inThisAcademicYear.stream().map(attendanceMapper::toDto).toList();
     }
 
+    @Transactional
+    public LessonDTO updateCodeForOpenLessonByCourse(UUID courseId, DigitCode digitCode) {
+        Optional<Course> course = courseRepository.findById(courseId);
+        Optional<Lesson> openLesson = lessonRepository.findLessonWithMaxStartDateByCourse(course.orElseThrow(CourseNotFoundException::new));
+        openLesson.orElseThrow(LessonNotFoundException::new).setDigitCode(digitCode);
+        Lesson savedLesson = lessonRepository.save(openLesson.get());
+        return lessonMapper.toDto(savedLesson);
+    }
 }
